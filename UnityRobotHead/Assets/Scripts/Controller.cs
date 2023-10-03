@@ -16,7 +16,7 @@ public class Controller : MonoBehaviour
     public Transform head;
     public Transform user;
     public Transform target;
-    public Transform camera; 
+    //public Transform camera; 
 
     Vector3 eyeOrientVect;
     Vector3 cameraOrientVect;
@@ -26,14 +26,22 @@ public class Controller : MonoBehaviour
 public GameObject gridPiece;
 public Transform gridPieceTF;
 
+public GameObject[] babyPlanes;
+
+private const int NUM_GRIDS = 16;
+
     void Start () 
     {
-
+        //babyPlanes = new GameObject[NUM_GRIDS];
+        // for (int i = 0; i < NUM_GRIDS; i++) {
+        //     string curPlane = "babyPlane" + (i + 1);
+        //     babyPlanes[i] = GameObject.FindGameObjectsWithTag("babyPlane1")[0];
+        // }
     }
 
     void Update()
     {
-        Debug.Log("in update");
+        Debug.Log("in updateee");
     }
 
     private void updateHeadPosition(float x, float y, float z) {
