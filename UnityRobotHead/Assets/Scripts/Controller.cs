@@ -17,37 +17,46 @@ public class Controller : MonoBehaviour
     public GameObject user;
     public GameObject leftEye;
     public GameObject rightEye;
-    public GameObject camera;
+    public Camera camera;
     public GameObject plane;
 
     Vector3 eyeOrientVect;
     Vector3 cameraOrientVect;
     Vector3 righteye;
     Vector3 lefteye;
-public GameObject[] babyPlanes; // TODO: store all positions of mini planes in here
+
+    public GameObject[] babyPlanes; // TODO: store all positions of mini planes in here
 
 private const int NUM_GRIDS = 16;
 
     void Start () 
     {
-        // initalize head
-        Instantiate(head, new Vector3(0,0,0), Quaternion.identity);
-        Instantiate(leftEye, new Vector3(7,-0.65f,-3.8f), Quaternion.identity);
-        Instantiate(rightEye, new Vector3(7,-0.65f,3.8f), Quaternion.identity);
-        Instantiate(camera, new Vector3(50,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        Instantiate(user, new Vector3(60,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        Instantiate(plane, new Vector3(100,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
-
-        //babyPlanes = new GameObject[NUM_GRIDS];
-        // for (int i = 0; i < NUM_GRIDS; i++) {
-        //     string curPlane = "babyPlane" + (i + 1);
-        //     babyPlanes[i] = GameObject.FindGameObjectsWithTag("babyPlane1")[0];
-        // }
+        head = Instantiate(head, new Vector3(0,0,0), Quaternion.identity);
+        leftEye = Instantiate(leftEye, new Vector3(7,-0.65f,-3.8f), Quaternion.identity);
+        rightEye = Instantiate(rightEye, new Vector3(7,-0.65f,3.8f), Quaternion.identity);
+        camera = (Camera) Instantiate(camera, new Vector3(50,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+        //Instantiate(user, new Vector3(60,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+        plane = Instantiate(plane, new Vector3(100,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
+        // Debug.Log("before change: ");
+        // Debug.Log(camera.transform.position);
+        // Debug.Log("focal length: ");
+        // Debug.Log(camera.focalLength);
     }
 
     void Update()
     {
+        updateCameraPosition(500);
+        Debug.Log("after change: ");
+        Debug.Log(camera.transform.position);
+        Debug.Log(camera.focalLength);
+    }
 
+    // camera focal length is increased by same scale that camera position is changed (if camera pos is only changed via x vector)
+    private void updateCameraPosition(float x) {
+        float oldX = camera.transform.position.x;
+        float scale = x/oldX;
+        camera.focalLength = camera.focalLength * scale;
+        camera.transform.position = new Vector3(x, camera.transform.position.y, camera.transform.position.z);
     }
 
     private void updateHeadPosition(float x, float y, float z) {
