@@ -13,25 +13,31 @@ to the monitor. Target object will be the grid of lookable targets
 */
 public class Controller : MonoBehaviour
 {
-    public Transform head;
-    public Transform user;
-    public Transform target;
-    //public Transform camera; 
+    public GameObject head;
+    public GameObject user;
+    public GameObject leftEye;
+    public GameObject rightEye;
+    public GameObject camera;
+    public GameObject plane;
 
     Vector3 eyeOrientVect;
     Vector3 cameraOrientVect;
     Vector3 righteye;
     Vector3 lefteye;
-
-public GameObject gridPiece;
-public Transform gridPieceTF;
-
-public GameObject[] babyPlanes;
+public GameObject[] babyPlanes; // TODO: store all positions of mini planes in here
 
 private const int NUM_GRIDS = 16;
 
     void Start () 
     {
+        // initalize head
+        Instantiate(head, new Vector3(0,0,0), Quaternion.identity);
+        Instantiate(leftEye, new Vector3(7,-0.65f,-3.8f), Quaternion.identity);
+        Instantiate(rightEye, new Vector3(7,-0.65f,3.8f), Quaternion.identity);
+        Instantiate(camera, new Vector3(50,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+        Instantiate(user, new Vector3(60,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+        Instantiate(plane, new Vector3(100,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
+
         //babyPlanes = new GameObject[NUM_GRIDS];
         // for (int i = 0; i < NUM_GRIDS; i++) {
         //     string curPlane = "babyPlane" + (i + 1);
@@ -41,27 +47,23 @@ private const int NUM_GRIDS = 16;
 
     void Update()
     {
-        Debug.Log("in updateee");
+
     }
 
     private void updateHeadPosition(float x, float y, float z) {
-        GameObject face = GameObject.FindGameObjectsWithTag("MakiHead")[0];
-        face.transform.position = new Vector3(x, y, z);
+        head.transform.position = new Vector3(x, y, z);
     }
 
     private void rotateLeftEye(Quaternion rotation) {
-        GameObject leftEye = GameObject.FindGameObjectsWithTag("LeftEye")[0];
         leftEye.transform.rotation = rotation;
     }
 
     private void rotateRightEye(Quaternion rotation) {
-        GameObject rightEye = GameObject.FindGameObjectsWithTag("RightEye")[0];
         rightEye.transform.rotation = rotation;
     }
 
     private void updateCameraFocalLength(float f) {
-        Camera cam = Camera.main;
-        cam.focalLength = f;
+        // use f to focal length
     }
     
     // Vector3: 3 floats, not necessarily pos or rot
