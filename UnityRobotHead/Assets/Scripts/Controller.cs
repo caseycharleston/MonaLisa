@@ -18,6 +18,7 @@ public class Controller : MonoBehaviour
     public GameObject leftEye;
     public GameObject rightEye;
     public Camera camera;
+    public Camera camera;
     public GameObject plane;
 
     Vector3 eyeOrientVect;
@@ -49,7 +50,19 @@ private const int NUM_GRIDS = 16;
     void Update()
     {
         Debug.Log(camera);
-        lookAt(babyPlanes[0].position);
+        lookAt(babyPlanes[0].position);        
+        updateCameraPosition(500);
+        Debug.Log("after change: ");
+        Debug.Log(camera.transform.position);
+        Debug.Log(camera.focalLength);
+    }
+
+    // camera focal length is increased by same scale that camera position is changed (if camera pos is only changed via x vector)
+    private void updateCameraPosition(float x) {
+        float oldX = camera.transform.position.x;
+        float scale = x/oldX;
+        camera.focalLength = camera.focalLength * scale;
+        camera.transform.position = new Vector3(x, camera.transform.position.y, camera.transform.position.z);
     }
 
     private void updateHeadPosition(float x, float y, float z) {
