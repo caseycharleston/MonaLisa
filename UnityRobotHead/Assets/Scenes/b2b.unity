@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641228, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -169,8 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   head: {fileID: 2876067148955827815, guid: c4b15ce30a61a4e4a92dc341e068cc2a, type: 3}
   user: {fileID: 1607124158842302139, guid: f0b7b3666342a4a8e86503e89ad4bb61, type: 3}
-  leftEye: {fileID: 596675418285107082, guid: b010dd2f57e1b4fe1a6031cf7e0d065e, type: 3}
-  rightEye: {fileID: 596675418285107082, guid: b010dd2f57e1b4fe1a6031cf7e0d065e, type: 3}
+  leftEye: {fileID: 4471111830944706052, guid: 34ea4fef6292e44c6a93db6629a328ea, type: 3}
+  rightEye: {fileID: 4471111830944706052, guid: 34ea4fef6292e44c6a93db6629a328ea, type: 3}
   camera: {fileID: 5045814927657028066, guid: e62d6cb95fa6f46378bf4f5f0cb165ad, type: 3}
   plane: {fileID: 5957166004043467539, guid: 9097006c8d1744868b16a67ec8ece79a, type: 3}
   babyPlanes: []

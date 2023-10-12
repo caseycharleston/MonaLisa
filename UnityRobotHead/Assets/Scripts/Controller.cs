@@ -18,7 +18,6 @@ public class Controller : MonoBehaviour
     public GameObject leftEye;
     public GameObject rightEye;
     public Camera camera;
-    public Camera camera;
     public GameObject plane;
 
     Vector3 eyeOrientVect;
@@ -32,12 +31,13 @@ private const int NUM_GRIDS = 16;
     void Start () 
     {
         // initalize head
-        head = Instantiate(head, new Vector3(0,0,0), Quaternion.identity);
-        leftEye = Instantiate(leftEye, new Vector3(7,-0.65f,-3.8f), Quaternion.identity);
-        rightEye = Instantiate(rightEye, new Vector3(7,-0.65f,3.8f), Quaternion.identity);
-        camera = (Camera) Instantiate(camera, new Vector3(50,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        user = Instantiate(user, new Vector3(60,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        plane = Instantiate(plane, new Vector3(100,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
+        int headDist = 1; // distance from camera
+        head = Instantiate(head, new Vector3(-headDist,0,0), Quaternion.identity);
+        leftEye = Instantiate(leftEye, new Vector3(-headDist + 0.13f,-0.015f,-0.076f), Quaternion.identity);
+        rightEye = Instantiate(rightEye, new Vector3(-headDist + 0.13f,-0.015f,0.076f), Quaternion.identity);
+        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+        user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+        plane = Instantiate(plane, new Vector3(1,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
 
         // for cross looking
         eyeOrientVect = new Vector3(1, 0, 0);
@@ -49,12 +49,8 @@ private const int NUM_GRIDS = 16;
 
     void Update()
     {
-        Debug.Log(camera);
-        lookAt(babyPlanes[0].position);        
-        updateCameraPosition(500);
-        Debug.Log("after change: ");
-        Debug.Log(camera.transform.position);
-        Debug.Log(camera.focalLength);
+        lookAt(babyPlanes[0].position);      
+        // updateCameraPosition(500);
     }
 
     // camera focal length is increased by same scale that camera position is changed (if camera pos is only changed via x vector)
@@ -90,8 +86,6 @@ private const int NUM_GRIDS = 16;
         Vector3 lEyePos = leftEye.transform.position;
         Vector3 lEyeVect = target - lEyePos;
         Vector3 rEyeVect = target - rEyePos;
-        Debug.Log("lEyeVect " + lEyeVect);
-        Debug.Log("rEyeVect " + rEyeVect);
         lEyeVect = Vector3.Normalize(lEyeVect);
         rEyeVect = Vector3.Normalize(rEyeVect);
         // draw laser eyes (superman)
