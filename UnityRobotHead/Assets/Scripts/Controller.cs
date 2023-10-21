@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using System.Runtime.InteropServices;
 /*
 
 Project Design Strategy:
@@ -24,9 +26,13 @@ public class Controller : MonoBehaviour
     Vector3 cameraOrientVect;
     Vector3 righteye;
     Vector3 lefteye;
-public Transform[] babyPlanes; // TODO: store all positions of mini planes in here
+    public Transform[] babyPlanes; // TODO: store all positions of mini planes in here
 
-private const int NUM_GRIDS = 16;
+    private const int NUM_GRIDS = 16;
+
+    // sample function from dll for testing purposes (creates a eigen matrix then adds components)
+    [DllImport("UnityIntegration")]
+    public static extern ulong createMatrix(ulong a, ulong b, ulong c, ulong d);
 
     void Start () 
     {
@@ -45,6 +51,8 @@ private const int NUM_GRIDS = 16;
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
+
+        Debug.Log("Output from matrix: " + createMatrix(1, 2, 3, 7));
     }
 
     void Update()
