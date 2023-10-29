@@ -24,56 +24,59 @@ public class Controller : MonoBehaviour
     Vector3 cameraOrientVect;
     Vector3 righteye;
     Vector3 lefteye;
+
 public Transform[] babyPlanes; // TODO: store all positions of mini planes in here
 
-private const int NUM_GRIDS = 16;
+ const int NUM_GRIDS = 16;
 
     void Start () 
     {
         // initalize head
-        int headDist = 1; // distance from camera
-        head = Instantiate(head, new Vector3(-headDist,0,0), Quaternion.identity);
-        leftEye = Instantiate(leftEye, new Vector3(-headDist + 0.13f,-0.015f,-0.076f), Quaternion.identity);
-        rightEye = Instantiate(rightEye, new Vector3(-headDist + 0.13f,-0.015f,0.076f), Quaternion.identity);
-        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        plane = Instantiate(plane, new Vector3(1,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
+        float headDist = 1.0f; // distance from camera
+        head = Instantiate(head, new Vector3(0  ,0,-headDist), Quaternion.identity);
+        leftEye = Instantiate(leftEye, new Vector3(0.13f,-0.015f,-headDist + -0.076f), Quaternion.identity);
+        rightEye = Instantiate(rightEye, new Vector3(0.13f,-0.015f,-headDist + 0.076f), Quaternion.identity);
+        leftEye.transform.parent = head.transform;
+        rightEye.transform.parent = head.transform;
+        head.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+
+        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0 ,-180, 0)));
+        user = Instantiate(user, new Vector3(0,0,0.5f), Quaternion.Euler(new Vector3(0, -180, 0)));
+        plane = Instantiate(plane, new Vector3(0,0,1), Quaternion.Euler(new Vector3(0, 90, 90)));
 
         // for cross looking
-        eyeOrientVect = new Vector3(1, 0, 0);
+        eyeOrientVect = new Vector3(0, 0, 1);
         babyPlanes = new Transform[NUM_GRIDS];
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
     }
 
-    void Update()
-    {
-        lookAt(babyPlanes[0].position);      
-        // updateCameraPosition(500);
+    void Update() {
+        // lookAt(babyPlanes[0].position);      
     }
 
-    // camera focal length is increased by same scale that camera position is changed (if camera pos is only changed via x vector)
-    private void updateCameraPosition(float x) {
+    // camera focal length is increased by same scale that robot head position is chan
+     void updateCameraPosition(float x) {
         float oldX = camera.transform.position.x;
         float scale = x/oldX;
         camera.focalLength = camera.focalLength * scale;
         camera.transform.position = new Vector3(x, camera.transform.position.y, camera.transform.position.z);
     }
 
-    private void updateHeadPosition(float x, float y, float z) {
+     void updateHeadPosition(float x, float y, float z) {
         head.transform.position = new Vector3(x, y, z);
     }
 
-    private void rotateLeftEye(Quaternion rotation) {
+     void rotateLeftEye(Quaternion rotation) {
         leftEye.transform.rotation = rotation;
     }
 
-    private void rotateRightEye(Quaternion rotation) {
+     void rotateRightEye(Quaternion rotation) {
         rightEye.transform.rotation = rotation;
     }
 
-    private void updateCameraFocalLength(float f) {
+     void updateCameraFocalLength(float f) {
         // use f to focal length
     }
     
@@ -97,6 +100,9 @@ private const int NUM_GRIDS = 16;
         float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
         lcross = Vector3.Normalize(lcross);
         rcross = Vector3.Normalize(rcross);
+        // this rotation should be done in C++ file epic
+        // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
+        // the eye (left eye for example) is currently at M_head * M_eye_l
         rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
         leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
     }

@@ -1,0 +1,15 @@
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.csproj.AssemblyReference.cache
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.GeneratedMSBuildEditorConfig.editorconfig
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.AssemblyInfoInputs.cache
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.AssemblyInfo.cs
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.csproj.CoreCompileInputs.cache
+/Users/caseycharleston/ximena-jr/Server/bin/Debug/net6.0/server
+/Users/caseycharleston/ximena-jr/Server/bin/Debug/net6.0/server.deps.json
+/Users/caseycharleston/ximena-jr/Server/bin/Debug/net6.0/server.runtimeconfig.json
+/Users/caseycharleston/ximena-jr/Server/bin/Debug/net6.0/server.dll
+/Users/caseycharleston/ximena-jr/Server/bin/Debug/net6.0/server.pdb
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.dll
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/refint/server.dll
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.pdb
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/server.genruntimeconfig.cache
+/Users/caseycharleston/ximena-jr/Server/obj/Debug/net6.0/ref/server.dll
