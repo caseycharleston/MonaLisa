@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,7 @@ to the monitor. Target object will be the grid of lookable targets
 */
 public class Controller : MonoBehaviour
 {
+    private static bool debug = true;
     public GameObject head;
     public GameObject user;
     public GameObject leftEye;
@@ -25,7 +27,9 @@ public class Controller : MonoBehaviour
     Vector3 righteye;
     Vector3 lefteye;
 
-public Transform[] babyPlanes; // TODO: store all positions of mini planes in here
+    private UnityClient unityClient;
+
+public Transform[] babyPlanes;
 
  const int NUM_GRIDS = 16;
 
@@ -50,10 +54,17 @@ public Transform[] babyPlanes; // TODO: store all positions of mini planes in he
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
+
+        // Server Client
+        unityClient = new UnityClient("head");
+        unityClient.ConnectToServer("127.0.0.1", 12345);
+
+
+
     }
 
     void Update() {
-        // lookAt(babyPlanes[0].position);      
+        TestServer();      
     }
 
     // camera focal length is increased by same scale that robot head position is chan
@@ -83,27 +94,83 @@ public Transform[] babyPlanes; // TODO: store all positions of mini planes in he
     // Vector3: 3 floats, not necessarily pos or rot
     // position: gotten from Transform.position
     // 
-    public void lookAt(Vector3 target) {
-        // get location, rotation
-        Vector3 rEyePos = rightEye.transform.position;
-        Vector3 lEyePos = leftEye.transform.position;
-        Vector3 lEyeVect = target - lEyePos;
-        Vector3 rEyeVect = target - rEyePos;
-        lEyeVect = Vector3.Normalize(lEyeVect);
-        rEyeVect = Vector3.Normalize(rEyeVect);
-        // draw laser eyes (superman)
-        Debug.DrawRay(rEyePos, rEyeVect * 10000000, Color.red, 100000f);
-        Debug.DrawRay(lEyePos, lEyeVect * 10000000, Color.red, 100000f);
-        Vector3 lcross = Vector3.Cross(eyeOrientVect, lEyeVect);
-        Vector3 rcross = Vector3.Cross(eyeOrientVect, rEyeVect);
-        float langle = Vector3.Angle(lEyeVect, eyeOrientVect);
-        float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
-        lcross = Vector3.Normalize(lcross);
-        rcross = Vector3.Normalize(rcross);
-        // this rotation should be done in C++ file epic
-        // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
-        // the eye (left eye for example) is currently at M_head * M_eye_l
-        rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
-        leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
+    // public void lookAt(Vector3 target) {
+    //     // get location, rotation
+    //     Vector3 rEyePos = rightEye.transform.position;
+    //     Vector3 lEyePos = leftEye.transform.position;
+    //     Vector3 lEyeVect = target - lEyePos;
+    //     Vector3 rEyeVect = target - rEyePos;
+    //     lEyeVect = Vector3.Normalize(lEyeVect);
+    //     rEyeVect = Vector3.Normalize(rEyeVect);
+    //     // draw laser eyes (superman)
+    //     Debug.DrawRay(rEyePos, rEyeVect * 10000000, Color.red, 100000f);
+    //     Debug.DrawRay(lEyePos, lEyeVect * 10000000, Color.red, 100000f);
+    //     Vector3 lcross = Vector3.Cross(eyeOrientVect, lEyeVect);
+    //     Vector3 rcross = Vector3.Cross(eyeOrientVect, rEyeVect);
+    //     float langle = Vector3.Angle(lEyeVect, eyeOrientVect);
+    //     float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
+    //     lcross = Vector3.Normalize(lcross);
+    //     rcross = Vector3.Normalize(rcross);
+    //     // this rotation should be done in C++ file epic
+    //     // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
+    //     // the eye (left eye for example) is currently at M_head * M_eye_l
+        //    rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
+    //     leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
+    // }
+
+    // Method to make sure server code is functionally properly.
+    void TestServer() {
+        Quaternion[] rots = ConvertToQuats(unityClient.ReceiveMessage());
+        if (rots == null) return; // No message being sent right now
+        Debug.Log(rots[0]);
+        Debug.Log(rots[1]);
+        rightEye.transform.rotation = rots[0];
+        leftEye.transform.rotation = rots[1];
+    }
+
+      /*
+        Custom method to read in 6 float values from a string (usually a server message).
+        This converts the string to a Quaternion array with Quaternion.Euler.
+        The expected string format is: "1.0,1.0,1.0,1.0,1.0,1.0" 
+        where each comma-separated value (in order from left to right) is the X, Y, and Z rotation (first 3 are left eye, second 3 are right eye).
+        If the processed string is not
+        returns null if msg was invalid (doesn't contain all floats or not enough floats passed in)
+        Otherwise, returns a Quaternion using Euler on the three expected float values
+    */
+    public static Quaternion[] ConvertToQuats(string msg) 
+    {
+        if (debug) Debug.Log("Message to convert: " + msg);
+        // try-catch for if the values read in are not floats.
+        try
+        {
+            string[] rotValues = msg.Split(',');
+            if (debug) Debug.Log("rotValues.Length: " + rotValues.Length);
+            if (rotValues.Length != 6)
+            {
+                return null;
+            }
+            if (debug) {
+                string result = "";
+                for (int i = 0; i < rotValues.Length; i++) {
+                    result += rotValues[i] + ", ";
+                }
+                Debug.Log(result);
+            }
+
+            // Left eye x, y, z
+            float x = (float)double.Parse(rotValues[0]);
+            float y = (float)double.Parse(rotValues[1]);
+            float z = (float)double.Parse(rotValues[2]);
+            // right eye x, y, z
+            float x2 = (float)double.Parse(rotValues[3]);
+            float y2 = (float)double.Parse(rotValues[4]);
+            float z2 = (float)double.Parse(rotValues[5]);
+            return new Quaternion [] { Quaternion.Euler(x, y, z), Quaternion.Euler(x2, y2, z2) };
+        }
+        catch (Exception e)
+        {
+            if (debug) Debug.Log(e);
+            return null;
+        }
     }
 }
