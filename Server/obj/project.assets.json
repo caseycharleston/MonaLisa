@@ -1,36 +1,36 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {}
+    "net7.0": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
-    "net6.0": []
+    "net7.0": []
   },
   "packageFolders": {
-    "/Users/caseycharleston/.nuget/packages/": {}
+    "/Users/caseyc/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/caseycharleston/ximena-jr/server/server.csproj",
-      "projectName": "server",
-      "projectPath": "/Users/caseycharleston/ximena-jr/server/server.csproj",
-      "packagesPath": "/Users/caseycharleston/.nuget/packages/",
-      "outputPath": "/Users/caseycharleston/ximena-jr/server/obj/",
+      "projectUniqueName": "/Users/caseyc/ximena-jr/Server/Server.csproj",
+      "projectName": "Server",
+      "projectPath": "/Users/caseyc/ximena-jr/Server/Server.csproj",
+      "packagesPath": "/Users/caseyc/.nuget/packages/",
+      "outputPath": "/Users/caseyc/ximena-jr/Server/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/caseycharleston/.nuget/NuGet/NuGet.Config"
+        "/Users/caseyc/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "net6.0"
+        "net7.0"
       ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
+        "net7.0": {
+          "targetAlias": "net7.0",
           "projectReferences": {}
         }
       },
@@ -41,8 +41,8 @@
       }
     },
     "frameworks": {
-      "net6.0": {
-        "targetAlias": "net6.0",
+      "net7.0": {
+        "targetAlias": "net7.0",
         "imports": [
           "net461",
           "net462",
@@ -59,7 +59,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.401/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.403/RuntimeIdentifierGraph.json"
       }
     }
   }
