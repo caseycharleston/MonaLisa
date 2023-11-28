@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+
+using System.Runtime.InteropServices;
 /*
 
 Project Design Strategy:
@@ -30,9 +32,9 @@ public class Controller : MonoBehaviour
 
     private UnityClient unityClient;
 
-public Transform[] babyPlanes;
+    public Transform[] babyPlanes;
 
- const int NUM_GRIDS = 16;
+    const int NUM_GRIDS = 16;
 
     void Start () 
     {
@@ -69,7 +71,6 @@ public Transform[] babyPlanes;
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
-
         // Server Client
         unityClient = new UnityClient("head");
         unityClient.ConnectToServer("127.0.0.1", 12345);
