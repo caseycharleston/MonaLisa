@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 using System.Runtime.InteropServices;
@@ -15,6 +17,7 @@ to the monitor. Target object will be the grid of lookable targets
 */
 public class Controller : MonoBehaviour
 {
+    private static bool debug = true;
     public GameObject head;
     public GameObject user;
     public GameObject leftEye;
@@ -26,62 +29,70 @@ public class Controller : MonoBehaviour
     Vector3 cameraOrientVect;
     Vector3 righteye;
     Vector3 lefteye;
-    public Transform[] babyPlanes; // TODO: store all positions of mini planes in here
 
-    private const int NUM_GRIDS = 16;
+    private UnityClient unityClient;
 
-    // sample function from dll for testing purposes (creates a eigen matrix then adds components)
-    [DllImport("UnityIntegration")]
-    public static extern ulong createMatrix(ulong a, ulong b, ulong c, ulong d);
+    public Transform[] babyPlanes;
+
+    const int NUM_GRIDS = 16;
 
     void Start () 
     {
         // initalize head
-        int headDist = 1; // distance from camera
-        head = Instantiate(head, new Vector3(-headDist,0,0), Quaternion.identity);
-        leftEye = Instantiate(leftEye, new Vector3(-headDist + 0.13f,-0.015f,-0.076f), Quaternion.identity);
-        rightEye = Instantiate(rightEye, new Vector3(-headDist + 0.13f,-0.015f,0.076f), Quaternion.identity);
-        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
-        user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, -90, 0)));
+
+        /* Settings for Production */
+        // float headDist = 1.0f; // distance from camera
+        // head = Instantiate(head, new Vector3(0, 0, -headDist), Quaternion.identity);
+        // leftEye = Instantiate(leftEye, new Vector3(0.13f,-0.015f,-headDist + -0.076f), Quaternion.identity);
+        // rightEye = Instantiate(rightEye, new Vector3(0.13f,-0.015f,-headDist + 0.076f), Quaternion.identity);
+        // leftEye.transform.parent = head.transform;
+        // rightEye.transform.parent = head.transform;
+        // head.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+
+        // camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0 ,-180, 0)));
+        // user = Instantiate(user, new Vector3(0,0,0.5f), Quaternion.Euler(new Vector3(0, -180, 0)));
+        // plane = Instantiate(plane, new Vector3(0,0,1), Quaternion.Euler(new Vector3(0, -90, 90)));
+
+        /* Settings for Demo. For some reason, lookAt does not work if head is normalized on Z axis */
+        float headDist = 1.0f; // distance from camera
+        head = Instantiate(head, new Vector3(-headDist, 0, 0), Quaternion.identity);
+        leftEye = Instantiate(leftEye, new Vector3(0.13f + -headDist,-0.015f, -0.076f), Quaternion.identity);
+        rightEye = Instantiate(rightEye, new Vector3(0.13f + -headDist, -0.015f, 0.076f), Quaternion.identity);
+        leftEye.transform.parent = head.transform;
+        rightEye.transform.parent = head.transform;
+
+        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, 270, 0)));
+        user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, 0, 0)));
         plane = Instantiate(plane, new Vector3(1,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
 
         // for cross looking
-        eyeOrientVect = new Vector3(1, 0, 0);
+        eyeOrientVect = new Vector3(0, 0, 1);
         babyPlanes = new Transform[NUM_GRIDS];
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
-
-        Debug.Log("Output from matrix: " + createMatrix(1, 2, 3, 7));
+        // Server Client
+        unityClient = new UnityClient("head");
+        unityClient.ConnectToServer("127.0.0.1", 12345);
     }
 
-    void Update()
-    {
-        lookAt(babyPlanes[0].position);      
-        // updateCameraPosition(500);
+    void Update() {
+        TestServer();
     }
 
-    // camera focal length is increased by same scale that camera position is changed (if camera pos is only changed via x vector)
-    private void updateCameraPosition(float x) {
+    // camera focal length is increased by same scale that robot head position is changed
+     void updateCameraPosition(float x) {
         float oldX = camera.transform.position.x;
         float scale = x/oldX;
         camera.focalLength = camera.focalLength * scale;
         camera.transform.position = new Vector3(x, camera.transform.position.y, camera.transform.position.z);
     }
 
-    private void updateHeadPosition(float x, float y, float z) {
+     void updateHeadPosition(float x, float y, float z) {
         head.transform.position = new Vector3(x, y, z);
     }
 
-    private void rotateLeftEye(Quaternion rotation) {
-        leftEye.transform.rotation = rotation;
-    }
-
-    private void rotateRightEye(Quaternion rotation) {
-        rightEye.transform.rotation = rotation;
-    }
-
-    private void updateCameraFocalLength(float f) {
+     void updateCameraFocalLength(float f) {
         // use f to focal length
     }
     
@@ -105,7 +116,71 @@ public class Controller : MonoBehaviour
         float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
         lcross = Vector3.Normalize(lcross);
         rcross = Vector3.Normalize(rcross);
-        rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
+        // this rotation should be done in C++ file epic
+        // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
+        // the eye (left eye for example) is currently at M_head * M_eye_l
+           rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
         leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
+    }
+
+    // Method to make sure server code is functioning properly
+    void TestServer() {
+        Quaternion[] rots = ConvertToQuats(unityClient.ReceiveMessage());
+        if (rots != null) {
+            Debug.Log(rots[0]);
+            Debug.Log(rots[1]);
+            rightEye.transform.rotation = rots[0];
+            leftEye.transform.rotation = rots[1];
+        } else {
+            Debug.Log("rots is null. Message received badly structured");
+        }
+
+    }
+
+      /*
+        Custom method to read in 6 float values from a string (usually a server message).
+        This converts the string to a Quaternion array with Quaternion.Euler.
+        The expected string format is: "1.0,1.0,1.0,1.0,1.0,1.0" 
+        where each comma-separated value (in order from left to right) is the X, Y, and Z rotation (first 3 are left eye, second 3 are right eye).
+        If the processed string is not
+        returns null if msg was invalid (doesn't contain all floats or not enough floats passed in)
+        Otherwise, returns a Quaternion using Euler on the three expected float values
+    */
+    public static Quaternion[] ConvertToQuats(string msg)
+    {
+        if (debug) Debug.Log("Message to convert: " + msg);
+
+        // Try-catch for if the values read in are not floats.
+        try
+        {
+            msg =  Regex.Match(msg, @"[-0-9,.]+").Value;
+            string[] rotValues = msg.Split(',');
+
+            if (debug) Debug.Log("rotValues.Length: " + rotValues.Length);
+
+            if (rotValues.Length != 6)
+            {
+                return null;
+            }
+
+            float x, y, z, x2, y2, z2;
+
+            if (!float.TryParse(rotValues[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x) ||
+                !float.TryParse(rotValues[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y) ||
+                !float.TryParse(rotValues[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z) ||
+                !float.TryParse(rotValues[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x2) ||
+                !float.TryParse(rotValues[4], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y2) ||
+                !float.TryParse(rotValues[5], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z2))
+            {
+                return null;
+            }
+
+            return new Quaternion[] { Quaternion.Euler(x, y, z), Quaternion.Euler(x2, y2, z2) };
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+            return null;
+        }
     }
 }
