@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 /*
 
@@ -36,17 +37,31 @@ public Transform[] babyPlanes;
     void Start () 
     {
         // initalize head
+
+        /* Settings for Production */
+        // float headDist = 1.0f; // distance from camera
+        // head = Instantiate(head, new Vector3(0, 0, -headDist), Quaternion.identity);
+        // leftEye = Instantiate(leftEye, new Vector3(0.13f,-0.015f,-headDist + -0.076f), Quaternion.identity);
+        // rightEye = Instantiate(rightEye, new Vector3(0.13f,-0.015f,-headDist + 0.076f), Quaternion.identity);
+        // leftEye.transform.parent = head.transform;
+        // rightEye.transform.parent = head.transform;
+        // head.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+
+        // camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0 ,-180, 0)));
+        // user = Instantiate(user, new Vector3(0,0,0.5f), Quaternion.Euler(new Vector3(0, -180, 0)));
+        // plane = Instantiate(plane, new Vector3(0,0,1), Quaternion.Euler(new Vector3(0, -90, 90)));
+
+        /* Settings for Demo. For some reason, lookAt does not work if head is normalized on Z axis */
         float headDist = 1.0f; // distance from camera
-        head = Instantiate(head, new Vector3(0  ,0,-headDist), Quaternion.identity);
-        leftEye = Instantiate(leftEye, new Vector3(0.13f,-0.015f,-headDist + -0.076f), Quaternion.identity);
-        rightEye = Instantiate(rightEye, new Vector3(0.13f,-0.015f,-headDist + 0.076f), Quaternion.identity);
+        head = Instantiate(head, new Vector3(-headDist, 0, 0), Quaternion.identity);
+        leftEye = Instantiate(leftEye, new Vector3(0.13f + -headDist,-0.015f, -0.076f), Quaternion.identity);
+        rightEye = Instantiate(rightEye, new Vector3(0.13f + -headDist, -0.015f, 0.076f), Quaternion.identity);
         leftEye.transform.parent = head.transform;
         rightEye.transform.parent = head.transform;
-        head.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
 
-        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0 ,-180, 0)));
-        user = Instantiate(user, new Vector3(0,0,0.5f), Quaternion.Euler(new Vector3(0, -180, 0)));
-        plane = Instantiate(plane, new Vector3(0,0,1), Quaternion.Euler(new Vector3(0, 90, 90)));
+        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, 270, 0)));
+        user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, 0, 0)));
+        plane = Instantiate(plane, new Vector3(1,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
 
         // for cross looking
         eyeOrientVect = new Vector3(0, 0, 1);
@@ -58,16 +73,13 @@ public Transform[] babyPlanes;
         // Server Client
         unityClient = new UnityClient("head");
         unityClient.ConnectToServer("127.0.0.1", 12345);
-
-
-
     }
 
     void Update() {
-        TestServer();      
+        TestServer();
     }
 
-    // camera focal length is increased by same scale that robot head position is chan
+    // camera focal length is increased by same scale that robot head position is changed
      void updateCameraPosition(float x) {
         float oldX = camera.transform.position.x;
         float scale = x/oldX;
@@ -79,14 +91,6 @@ public Transform[] babyPlanes;
         head.transform.position = new Vector3(x, y, z);
     }
 
-     void rotateLeftEye(Quaternion rotation) {
-        leftEye.transform.rotation = rotation;
-    }
-
-     void rotateRightEye(Quaternion rotation) {
-        rightEye.transform.rotation = rotation;
-    }
-
      void updateCameraFocalLength(float f) {
         // use f to focal length
     }
@@ -94,38 +98,42 @@ public Transform[] babyPlanes;
     // Vector3: 3 floats, not necessarily pos or rot
     // position: gotten from Transform.position
     // 
-    // public void lookAt(Vector3 target) {
-    //     // get location, rotation
-    //     Vector3 rEyePos = rightEye.transform.position;
-    //     Vector3 lEyePos = leftEye.transform.position;
-    //     Vector3 lEyeVect = target - lEyePos;
-    //     Vector3 rEyeVect = target - rEyePos;
-    //     lEyeVect = Vector3.Normalize(lEyeVect);
-    //     rEyeVect = Vector3.Normalize(rEyeVect);
-    //     // draw laser eyes (superman)
-    //     Debug.DrawRay(rEyePos, rEyeVect * 10000000, Color.red, 100000f);
-    //     Debug.DrawRay(lEyePos, lEyeVect * 10000000, Color.red, 100000f);
-    //     Vector3 lcross = Vector3.Cross(eyeOrientVect, lEyeVect);
-    //     Vector3 rcross = Vector3.Cross(eyeOrientVect, rEyeVect);
-    //     float langle = Vector3.Angle(lEyeVect, eyeOrientVect);
-    //     float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
-    //     lcross = Vector3.Normalize(lcross);
-    //     rcross = Vector3.Normalize(rcross);
-    //     // this rotation should be done in C++ file epic
-    //     // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
-    //     // the eye (left eye for example) is currently at M_head * M_eye_l
-        //    rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
-    //     leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
-    // }
+    public void lookAt(Vector3 target) {
+        // get location, rotation
+        Vector3 rEyePos = rightEye.transform.position;
+        Vector3 lEyePos = leftEye.transform.position;
+        Vector3 lEyeVect = target - lEyePos;
+        Vector3 rEyeVect = target - rEyePos;
+        lEyeVect = Vector3.Normalize(lEyeVect);
+        rEyeVect = Vector3.Normalize(rEyeVect);
+        // draw laser eyes (superman)
+        Debug.DrawRay(rEyePos, rEyeVect * 10000000, Color.red, 100000f);
+        Debug.DrawRay(lEyePos, lEyeVect * 10000000, Color.red, 100000f);
+        Vector3 lcross = Vector3.Cross(eyeOrientVect, lEyeVect);
+        Vector3 rcross = Vector3.Cross(eyeOrientVect, rEyeVect);
+        float langle = Vector3.Angle(lEyeVect, eyeOrientVect);
+        float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
+        lcross = Vector3.Normalize(lcross);
+        rcross = Vector3.Normalize(rcross);
+        // this rotation should be done in C++ file epic
+        // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
+        // the eye (left eye for example) is currently at M_head * M_eye_l
+           rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
+        leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
+    }
 
-    // Method to make sure server code is functionally properly.
+    // Method to make sure server code is functioning properly
     void TestServer() {
         Quaternion[] rots = ConvertToQuats(unityClient.ReceiveMessage());
-        if (rots == null) return; // No message being sent right now
-        Debug.Log(rots[0]);
-        Debug.Log(rots[1]);
-        rightEye.transform.rotation = rots[0];
-        leftEye.transform.rotation = rots[1];
+        if (rots != null) {
+            Debug.Log(rots[0]);
+            Debug.Log(rots[1]);
+            rightEye.transform.rotation = rots[0];
+            leftEye.transform.rotation = rots[1];
+        } else {
+            Debug.Log("rots is null. Message received badly structured");
+        }
+
     }
 
       /*
@@ -137,39 +145,40 @@ public Transform[] babyPlanes;
         returns null if msg was invalid (doesn't contain all floats or not enough floats passed in)
         Otherwise, returns a Quaternion using Euler on the three expected float values
     */
-    public static Quaternion[] ConvertToQuats(string msg) 
+    public static Quaternion[] ConvertToQuats(string msg)
     {
         if (debug) Debug.Log("Message to convert: " + msg);
-        // try-catch for if the values read in are not floats.
+
+        // Try-catch for if the values read in are not floats.
         try
         {
+            msg =  Regex.Match(msg, @"[-0-9,.]+").Value;
             string[] rotValues = msg.Split(',');
+
             if (debug) Debug.Log("rotValues.Length: " + rotValues.Length);
+
             if (rotValues.Length != 6)
             {
                 return null;
             }
-            if (debug) {
-                string result = "";
-                for (int i = 0; i < rotValues.Length; i++) {
-                    result += rotValues[i] + ", ";
-                }
-                Debug.Log(result);
+
+            float x, y, z, x2, y2, z2;
+
+            if (!float.TryParse(rotValues[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x) ||
+                !float.TryParse(rotValues[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y) ||
+                !float.TryParse(rotValues[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z) ||
+                !float.TryParse(rotValues[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x2) ||
+                !float.TryParse(rotValues[4], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y2) ||
+                !float.TryParse(rotValues[5], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z2))
+            {
+                return null;
             }
 
-            // Left eye x, y, z
-            float x = (float)double.Parse(rotValues[0]);
-            float y = (float)double.Parse(rotValues[1]);
-            float z = (float)double.Parse(rotValues[2]);
-            // right eye x, y, z
-            float x2 = (float)double.Parse(rotValues[3]);
-            float y2 = (float)double.Parse(rotValues[4]);
-            float z2 = (float)double.Parse(rotValues[5]);
-            return new Quaternion [] { Quaternion.Euler(x, y, z), Quaternion.Euler(x2, y2, z2) };
+            return new Quaternion[] { Quaternion.Euler(x, y, z), Quaternion.Euler(x2, y2, z2) };
         }
         catch (Exception e)
         {
-            if (debug) Debug.Log(e);
+            Debug.Log(e);
             return null;
         }
     }

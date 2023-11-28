@@ -24,13 +24,18 @@ int main () {
 
     /* Basic send rotational values tester */
 
-   
+    int count = 0;
     while (true) {
         char response;
         cout << "Send message? (y/n)";
         cin >> response;
         if (response == 'n') break;
-        myClient.SendMessage("1,1,1,1,1,-1");
+        if (count % 2 == 0) {
+            myClient.SendMessage("50,50,50,50,50,50");
+        } else {
+            myClient.SendMessage("-0.1,-0.1,-0.1,0.1,0.1,0.1");
+        }
+        count++;
     }
     return 0;
 }
