@@ -5,9 +5,10 @@ project(test)
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
+find_package(Ceres REQUIRED)
 
 # Executables
-add_executable(test test.cpp client.cpp)
+add_executable(test lisa_driver.cpp client.cpp rigid_transformation.cpp)
 
 # Link to dependencies
 target_include_directories(test 
@@ -22,7 +23,13 @@ target_link_libraries (test
     ${OpenCV_LIBS}
 
     # Link with Boost libraries (e.g., system)
-    Boost::system)
+    Boost::system
+
+    # Link with Ceres
+    Ceres::ceres
+    )
+
+
 
 
 

@@ -1,8 +1,10 @@
 file(REMOVE_RECURSE
   "CMakeFiles/test.dir/client.cpp.o"
   "CMakeFiles/test.dir/client.cpp.o.d"
-  "CMakeFiles/test.dir/test.cpp.o"
-  "CMakeFiles/test.dir/test.cpp.o.d"
+  "CMakeFiles/test.dir/lisa_driver.cpp.o"
+  "CMakeFiles/test.dir/lisa_driver.cpp.o.d"
+  "CMakeFiles/test.dir/rigid_transformation.cpp.o"
+  "CMakeFiles/test.dir/rigid_transformation.cpp.o.d"
   "test"
   "test.pdb"
 )

@@ -19,7 +19,7 @@ public:
     ~RigidTransformation() {}
 
     // compute transformation from 3d coordinates to 2d based on focal lengths (projection of eye onto screen)
-    Eigen::Vector2f computeEyeOnScreen(float fx, float fy);
+    Eigen::Vector3f computeEyeOnScreen(float fx, float fy);
 
     // Compute the transformation to make eye look at target (normal head). returns quaternion
     Eigen::Quaternionf computeRotationTransformation(float x, float y, float z);

@@ -153,29 +153,53 @@ client.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/client.cpp.s
 .PHONY : client.cpp.s
 
-test.o: test.cpp.o
-.PHONY : test.o
+lisa_driver.o: lisa_driver.cpp.o
+.PHONY : lisa_driver.o
 
 # target to build an object file
-test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.o
-.PHONY : test.cpp.o
+lisa_driver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/lisa_driver.cpp.o
+.PHONY : lisa_driver.cpp.o
 
-test.i: test.cpp.i
-.PHONY : test.i
+lisa_driver.i: lisa_driver.cpp.i
+.PHONY : lisa_driver.i
 
 # target to preprocess a source file
-test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.i
-.PHONY : test.cpp.i
+lisa_driver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/lisa_driver.cpp.i
+.PHONY : lisa_driver.cpp.i
 
-test.s: test.cpp.s
-.PHONY : test.s
+lisa_driver.s: lisa_driver.cpp.s
+.PHONY : lisa_driver.s
 
 # target to generate assembly for a file
-test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.s
-.PHONY : test.cpp.s
+lisa_driver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/lisa_driver.cpp.s
+.PHONY : lisa_driver.cpp.s
+
+rigid_transformation.o: rigid_transformation.cpp.o
+.PHONY : rigid_transformation.o
+
+# target to build an object file
+rigid_transformation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/rigid_transformation.cpp.o
+.PHONY : rigid_transformation.cpp.o
+
+rigid_transformation.i: rigid_transformation.cpp.i
+.PHONY : rigid_transformation.i
+
+# target to preprocess a source file
+rigid_transformation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/rigid_transformation.cpp.i
+.PHONY : rigid_transformation.cpp.i
+
+rigid_transformation.s: rigid_transformation.cpp.s
+.PHONY : rigid_transformation.s
+
+# target to generate assembly for a file
+rigid_transformation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/rigid_transformation.cpp.s
+.PHONY : rigid_transformation.cpp.s
 
 # Help Target
 help:
@@ -189,9 +213,12 @@ help:
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"
-	@echo "... test.o"
-	@echo "... test.i"
-	@echo "... test.s"
+	@echo "... lisa_driver.o"
+	@echo "... lisa_driver.i"
+	@echo "... lisa_driver.s"
+	@echo "... rigid_transformation.o"
+	@echo "... rigid_transformation.i"
+	@echo "... rigid_transformation.s"
 .PHONY : help
 
 

@@ -8,7 +8,7 @@ struct CostFunctor {
     bool operator()(const T* const x, T* residual) const {
         // Construct the homogeneous vector Ptwo with x as the third component
         Eigen::Matrix<T, 3, 1> mlProj;
-        mlProj << T(0.0), T(0.0), x[0];
+        mlProj << regProj_.template cast<T>().head(2), x[0];
 
         // Compute the residual as the difference between regular and mona lisa
         Eigen::Map<Eigen::Matrix<T, 3, 1>> residual_map(residual);
@@ -25,7 +25,7 @@ struct CostFunctor {
 int main() {
   // get regular projection from Unity code and initialize this variable
   Eigen::Vector3d regProj;
-  // get monal lisa projection from Unity Code and initialize
+  // get mona lisa projection from Unity Code and initialize
   Eigen::Vector3d mlProj_initial; 
 
   ceres::Problem problem;

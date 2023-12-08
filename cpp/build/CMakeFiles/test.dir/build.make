@@ -69,19 +69,19 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/test.cpp.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/test.cpp.o: /Users/caseyc/ximena-jr/cpp/test.cpp
-CMakeFiles/test.dir/test.cpp.o: CMakeFiles/test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/caseyc/ximena-jr/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test.dir/test.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test.dir/test.cpp.o -MF CMakeFiles/test.dir/test.cpp.o.d -o CMakeFiles/test.dir/test.cpp.o -c /Users/caseyc/ximena-jr/cpp/test.cpp
+CMakeFiles/test.dir/lisa_driver.cpp.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/lisa_driver.cpp.o: /Users/caseyc/ximena-jr/cpp/lisa_driver.cpp
+CMakeFiles/test.dir/lisa_driver.cpp.o: CMakeFiles/test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/caseyc/ximena-jr/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test.dir/lisa_driver.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test.dir/lisa_driver.cpp.o -MF CMakeFiles/test.dir/lisa_driver.cpp.o.d -o CMakeFiles/test.dir/lisa_driver.cpp.o -c /Users/caseyc/ximena-jr/cpp/lisa_driver.cpp
 
-CMakeFiles/test.dir/test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test.dir/test.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/caseyc/ximena-jr/cpp/test.cpp > CMakeFiles/test.dir/test.cpp.i
+CMakeFiles/test.dir/lisa_driver.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test.dir/lisa_driver.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/caseyc/ximena-jr/cpp/lisa_driver.cpp > CMakeFiles/test.dir/lisa_driver.cpp.i
 
-CMakeFiles/test.dir/test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test.dir/test.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/caseyc/ximena-jr/cpp/test.cpp -o CMakeFiles/test.dir/test.cpp.s
+CMakeFiles/test.dir/lisa_driver.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test.dir/lisa_driver.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/caseyc/ximena-jr/cpp/lisa_driver.cpp -o CMakeFiles/test.dir/lisa_driver.cpp.s
 
 CMakeFiles/test.dir/client.cpp.o: CMakeFiles/test.dir/flags.make
 CMakeFiles/test.dir/client.cpp.o: /Users/caseyc/ximena-jr/cpp/client.cpp
@@ -97,16 +97,32 @@ CMakeFiles/test.dir/client.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test.dir/client.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/caseyc/ximena-jr/cpp/client.cpp -o CMakeFiles/test.dir/client.cpp.s
 
+CMakeFiles/test.dir/rigid_transformation.cpp.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/rigid_transformation.cpp.o: /Users/caseyc/ximena-jr/cpp/rigid_transformation.cpp
+CMakeFiles/test.dir/rigid_transformation.cpp.o: CMakeFiles/test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/caseyc/ximena-jr/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/test.dir/rigid_transformation.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test.dir/rigid_transformation.cpp.o -MF CMakeFiles/test.dir/rigid_transformation.cpp.o.d -o CMakeFiles/test.dir/rigid_transformation.cpp.o -c /Users/caseyc/ximena-jr/cpp/rigid_transformation.cpp
+
+CMakeFiles/test.dir/rigid_transformation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test.dir/rigid_transformation.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/caseyc/ximena-jr/cpp/rigid_transformation.cpp > CMakeFiles/test.dir/rigid_transformation.cpp.i
+
+CMakeFiles/test.dir/rigid_transformation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test.dir/rigid_transformation.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/caseyc/ximena-jr/cpp/rigid_transformation.cpp -o CMakeFiles/test.dir/rigid_transformation.cpp.s
+
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/test.cpp.o" \
-"CMakeFiles/test.dir/client.cpp.o"
+"CMakeFiles/test.dir/lisa_driver.cpp.o" \
+"CMakeFiles/test.dir/client.cpp.o" \
+"CMakeFiles/test.dir/rigid_transformation.cpp.o"
 
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/test.cpp.o
+test: CMakeFiles/test.dir/lisa_driver.cpp.o
 test: CMakeFiles/test.dir/client.cpp.o
+test: CMakeFiles/test.dir/rigid_transformation.cpp.o
 test: CMakeFiles/test.dir/build.make
 test: /opt/homebrew/lib/libopencv_gapi.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_stitching.4.8.1.dylib
@@ -144,6 +160,7 @@ test: /opt/homebrew/lib/libopencv_xfeatures2d.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_xobjdetect.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_xphoto.4.8.1.dylib
 test: /opt/homebrew/lib/libboost_system-mt.dylib
+test: /opt/homebrew/lib/libceres.2.1.0.dylib
 test: /opt/homebrew/lib/libopencv_shape.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_highgui.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_datasets.4.8.1.dylib
@@ -164,8 +181,10 @@ test: /opt/homebrew/lib/libopencv_flann.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_photo.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_imgproc.4.8.1.dylib
 test: /opt/homebrew/lib/libopencv_core.4.8.1.dylib
+test: /opt/homebrew/lib/libglog.0.6.0.dylib
+test: /opt/homebrew/lib/libgflags.2.2.2.dylib
 test: CMakeFiles/test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/caseyc/ximena-jr/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/caseyc/ximena-jr/cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
