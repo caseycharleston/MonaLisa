@@ -71,7 +71,7 @@ class Server
                     continue;
                 }
                 // Example client code. Shows the ability to write specific code for a client's name
-                if (clientName.Equals("Test")) {
+                if (clientName.Equals("LisaDriver")) {
                     Console.WriteLine("Received from '{0}': {1}", clientName, message);
                     SendMessageToClient("head", message);
                 }

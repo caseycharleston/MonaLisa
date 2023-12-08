@@ -223,7 +223,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=test
+CMAKE_PROJECT_NAME:STATIC=lisa_driver
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/ranlib
@@ -388,6 +388,15 @@ gflags_DIR:PATH=/opt/homebrew/lib/cmake/gflags
 
 //The directory containing a CMake configuration file for glog.
 glog_DIR:PATH=/opt/homebrew/lib/cmake/glog
+
+//Value Computed by CMake
+lisa_driver_BINARY_DIR:STATIC=/Users/caseyc/ximena-jr/cpp/build
+
+//Value Computed by CMake
+lisa_driver_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+lisa_driver_SOURCE_DIR:STATIC=/Users/caseyc/ximena-jr/cpp
 
 //Value Computed by CMake
 test_BINARY_DIR:STATIC=/Users/caseyc/ximena-jr/cpp/build

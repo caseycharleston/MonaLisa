@@ -66,7 +66,7 @@ public class Controller : MonoBehaviour
         plane = Instantiate(plane, new Vector3(1,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
 
         // for cross looking
-        eyeOrientVect = new Vector3(0, 0, 1);
+        eyeOrientVect = new Vector3(1, 0, 0);
         babyPlanes = new Transform[NUM_GRIDS];
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
@@ -77,6 +77,9 @@ public class Controller : MonoBehaviour
     }
 
     void Update() {
+        // lookAt(babyPlanes[5].position);
+        // Debug.Log(leftEye.transform.rotation);
+        // Debug.Log(rightEye.transform.rotation);
         TestServer();
     }
 
@@ -119,7 +122,7 @@ public class Controller : MonoBehaviour
         // this rotation should be done in C++ file epic
         // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
         // the eye (left eye for example) is currently at M_head * M_eye_l
-           rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
+        rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
         leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
     }
 
@@ -134,14 +137,13 @@ public class Controller : MonoBehaviour
         } else {
             Debug.Log("rots is null. Message received badly structured");
         }
-
     }
 
       /*
         Custom method to read in 6 float values from a string (usually a server message).
         This converts the string to a Quaternion array with Quaternion.Euler.
-        The expected string format is: "1.0,1.0,1.0,1.0,1.0,1.0" 
-        where each comma-separated value (in order from left to right) is the X, Y, and Z rotation (first 3 are left eye, second 3 are right eye).
+        The expected string format is: "1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0"" 
+        where each comma-separated value (in order from left to right) is the W (scalar), X, Y, and Z rotation (first 3 are left eye, second 3 are right eye).
         If the processed string is not
         returns null if msg was invalid (doesn't contain all floats or not enough floats passed in)
         Otherwise, returns a Quaternion using Euler on the three expected float values
@@ -158,24 +160,27 @@ public class Controller : MonoBehaviour
 
             if (debug) Debug.Log("rotValues.Length: " + rotValues.Length);
 
-            if (rotValues.Length != 6)
+            if (rotValues.Length != 8)
             {
                 return null;
             }
 
-            float x, y, z, x2, y2, z2;
+            float w, x, y, z, w2, x2, y2, z2;
 
-            if (!float.TryParse(rotValues[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x) ||
-                !float.TryParse(rotValues[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y) ||
-                !float.TryParse(rotValues[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z) ||
-                !float.TryParse(rotValues[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x2) ||
-                !float.TryParse(rotValues[4], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y2) ||
-                !float.TryParse(rotValues[5], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z2))
+            if (!float.TryParse(rotValues[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out w) ||
+                !float.TryParse(rotValues[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x) ||
+                !float.TryParse(rotValues[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y) ||
+                !float.TryParse(rotValues[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z) ||             
+                !float.TryParse(rotValues[4], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out w2) ||
+                !float.TryParse(rotValues[5], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x2) ||
+                !float.TryParse(rotValues[6], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out y2) ||
+                !float.TryParse(rotValues[7], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out z2)
+                )
             {
                 return null;
             }
 
-            return new Quaternion[] { Quaternion.Euler(x, y, z), Quaternion.Euler(x2, y2, z2) };
+            return new Quaternion[] { new Quaternion(w, x, y, z),new Quaternion(w2, x2, y2, z2) };
         }
         catch (Exception e)
         {

@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test
+# Target rules for targets named lisa_driver
 
 # Build rule for target.
-test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test
-.PHONY : test
+lisa_driver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lisa_driver
+.PHONY : lisa_driver
 
 # fast build rule for target.
-test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-.PHONY : test/fast
+lisa_driver/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/build
+.PHONY : lisa_driver/fast
 
 client.o: client.cpp.o
 .PHONY : client.o
 
 # target to build an object file
 client.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/client.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/client.cpp.o
 .PHONY : client.cpp.o
 
 client.i: client.cpp.i
@@ -142,7 +142,7 @@ client.i: client.cpp.i
 
 # target to preprocess a source file
 client.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/client.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/client.cpp.i
 .PHONY : client.cpp.i
 
 client.s: client.cpp.s
@@ -150,7 +150,7 @@ client.s: client.cpp.s
 
 # target to generate assembly for a file
 client.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/client.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/client.cpp.s
 .PHONY : client.cpp.s
 
 lisa_driver.o: lisa_driver.cpp.o
@@ -158,7 +158,7 @@ lisa_driver.o: lisa_driver.cpp.o
 
 # target to build an object file
 lisa_driver.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/lisa_driver.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/lisa_driver.cpp.o
 .PHONY : lisa_driver.cpp.o
 
 lisa_driver.i: lisa_driver.cpp.i
@@ -166,7 +166,7 @@ lisa_driver.i: lisa_driver.cpp.i
 
 # target to preprocess a source file
 lisa_driver.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/lisa_driver.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/lisa_driver.cpp.i
 .PHONY : lisa_driver.cpp.i
 
 lisa_driver.s: lisa_driver.cpp.s
@@ -174,7 +174,7 @@ lisa_driver.s: lisa_driver.cpp.s
 
 # target to generate assembly for a file
 lisa_driver.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/lisa_driver.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/lisa_driver.cpp.s
 .PHONY : lisa_driver.cpp.s
 
 rigid_transformation.o: rigid_transformation.cpp.o
@@ -182,7 +182,7 @@ rigid_transformation.o: rigid_transformation.cpp.o
 
 # target to build an object file
 rigid_transformation.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/rigid_transformation.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/rigid_transformation.cpp.o
 .PHONY : rigid_transformation.cpp.o
 
 rigid_transformation.i: rigid_transformation.cpp.i
@@ -190,7 +190,7 @@ rigid_transformation.i: rigid_transformation.cpp.i
 
 # target to preprocess a source file
 rigid_transformation.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/rigid_transformation.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/rigid_transformation.cpp.i
 .PHONY : rigid_transformation.cpp.i
 
 rigid_transformation.s: rigid_transformation.cpp.s
@@ -198,7 +198,7 @@ rigid_transformation.s: rigid_transformation.cpp.s
 
 # target to generate assembly for a file
 rigid_transformation.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/rigid_transformation.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lisa_driver.dir/build.make CMakeFiles/lisa_driver.dir/rigid_transformation.cpp.s
 .PHONY : rigid_transformation.cpp.s
 
 # Help Target
@@ -209,7 +209,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... test"
+	@echo "... lisa_driver"
 	@echo "... client.o"
 	@echo "... client.i"
 	@echo "... client.s"

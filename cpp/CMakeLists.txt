@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(test)
+project(lisa_driver)
 
 # Package dependencies
 find_package(Eigen3 REQUIRED)
@@ -8,14 +8,14 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(Ceres REQUIRED)
 
 # Executables
-add_executable(test lisa_driver.cpp client.cpp rigid_transformation.cpp)
+add_executable(lisa_driver lisa_driver.cpp client.cpp rigid_transformation.cpp)
 
 # Link to dependencies
-target_include_directories(test 
+target_include_directories(lisa_driver 
 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
 ${EIGEN_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-target_link_libraries (test
+target_link_libraries (lisa_driver
     # Link with Eigen
     Eigen3::Eigen
 
