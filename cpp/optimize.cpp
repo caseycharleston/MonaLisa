@@ -1,53 +1,70 @@
+#include <iostream>
 #include <ceres/ceres.h>
 #include <Eigen/Dense>
-/*Defines the Cost Function for optimization*/
-struct CostFunctor {
-    CostFunctor(const Eigen::Vector3d& regProj) : regProj_(regProj) {}
+
+struct ProjectionCostFunction {
+    ProjectionCostFunction(const Eigen::Matrix<double, 4, 1>& regProjMat,
+                           const Eigen::Matrix<double, 4, 1>& monaProjMat)
+        : regular_projection_matrix(regProjMat),
+          updated_projection_matrix(monaProjMat) {}
 
     template <typename T>
-    bool operator()(const T* const x, T* residual) const {
-        // Construct the homogeneous vector Ptwo with x as the third component
-        Eigen::Matrix<T, 3, 1> mlProj;
-        mlProj << regProj_.template cast<T>().head(2), x[0];
+    bool operator()(const T* const z, T* residual) const {
+        // Create Eigen matrices from regular_projection_matrix and updated_proj_mat
+        Eigen::Map<const Eigen::Matrix<T, 4, 1>> reg_proj_mat(regProjMat.data());
+        Eigen::Map<Eigen::Matrix<T, 4, 1>> mona_proj_mat(monaProjMat.data());
+        
+        // Update 3rd row, first column (z value of matrix)
+        monaProjMat(2, 0) = z[0];
 
-        // Compute the residual as the difference between regular and mona lisa
-        Eigen::Map<Eigen::Matrix<T, 3, 1>> residual_map(residual);
-        residual_map = regProj_.template cast<T>() - mlProj;
+        // Compute the difference between regular_proj_mat and updated_proj_mat
+        Eigen::Matrix<T, 4, 1> diff = regProjMat - monaProjMat;
+
+        // Flatten the difference matrix into the residual array
+        Eigen::Map<Eigen::Matrix<T, 8, 1>> residual_map(residual);
+        residual_map = Eigen::Map<const Eigen::Matrix<T, 8, 1>>(diff.data());
 
         return true;
     }
 
-    private:
-        const Eigen::Vector3d regProj_;
+    static ceres::CostFunction* Create(const Eigen::Matrix<double, 4, 1>& regProjMat,
+                                       const Eigen::Matrix<double, 4, 1>& monaProjMat) {
+        return new ceres::AutoDiffCostFunction<ProjectionCostFunction, 8, 1>(
+            new ProjectionCostFunction(regProjMat, monaProjMat)
+        );
+    }
+
+    const Eigen::Matrix<double, 4, 1>& regProjMat;
+    const Eigen::Matrix<double, 4, 1>& monaProjMat;
 };
 
-
 int main() {
-  // get regular projection from Unity code and initialize this variable
-  Eigen::Vector3d regProj;
-  // get mona lisa projection from Unity Code and initialize
-  Eigen::Vector3d mlProj_initial; 
+    // Define your regular and updated projection matrices
+    Eigen::Matrix<double, 4, 1> regProjection;
+    Eigen::Matrix<double, 4, 1> monaProjection;
 
-  ceres::Problem problem;
+    // Set up the Ceres Solver problem
+    ceres::Problem problem;
 
-  ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction <CostFunctor, 3, 1>(new CostFunctor(regProj));
-  problem.AddResidualBlock(cost_function, nullptr, mlProj_initial.data());
+    // Add the cost function to the problem
+    problem.AddResidualBlock(
+        ProjectionCostFunction::Create(regProjection, monaProjection),
+        nullptr, // Loss function (nullptr for default)
+        monaProjection(2, 0).data() // The parameter to be optimized (z)
+    );
 
-  // Configure solver options
-  ceres::Solver::Options options;
-  options.minimizer_progress_to_stdout = true;
+    // Set up the solver options
+    ceres::Solver::Options options;
 
-  // Run the solver
-  ceres::Solver::Summary summary;
-  ceres::Solve(options, &problem, &summary);
+    ceres::Solver::Summary summary;
+    
+    // Solve the problem
+    ceres::Solve(options, &problem, &summary);
 
-  // Output results
-  std::cout << summary.FullReport() << std::endl;
+    // Output the results
+    std::cout << summary.BriefReport() << "\n";
+    std::cout << "Regular Projection Matrix:\n" << regProjection << "\n";
+    std::cout << "Updated Projection Matrix (with optimized z):\n" << monaProjection << "\n";
 
-  // Retrieve the optimized mona lisa projection (zero out x and y)
-  Eigen::Vector3d ML_Optimized;
-  ML_Optimized << 0.0, 0.0, mlProj_initial[0];
-  std::cout << "Optimized mona lisa:\n" << ML_Optimized << std::endl;
-
-  return 0;
+    return 0;
 }
