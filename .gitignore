@@ -1,5 +1,4 @@
-Server/bin/
-Server/obj/
+Server/server.exe
 
 cpp/build/
 .vscode/
