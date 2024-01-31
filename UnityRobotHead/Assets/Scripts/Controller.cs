@@ -80,7 +80,7 @@ public class Controller : MonoBehaviour
         // lookAt(babyPlanes[5].position);
         // Debug.Log(leftEye.transform.rotation);
         // Debug.Log(rightEye.transform.rotation);
-        TestServer();
+        acceptAndModifyQuats();
     }
 
     // camera focal length is increased by same scale that robot head position is changed
@@ -126,8 +126,12 @@ public class Controller : MonoBehaviour
         leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
     }
 
-    // Method to make sure server code is functioning properly
     void TestServer() {
+        // test code
+    }
+
+    // Method to make sure server code is functioning properly
+    void acceptAndModifyQuats() {
         Quaternion[] rots = ConvertToQuats(unityClient.ReceiveMessage());
         if (rots != null) {
             Debug.Log(rots[0]);

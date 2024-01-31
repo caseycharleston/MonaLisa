@@ -39,7 +39,9 @@ int main () {
     RigidTransformation leftEye(0.13 + -headDist, -0.015, -0.076, 0, 0, 0, 1);
     RigidTransformation rightEye(0.13 + -headDist, -0.015, 0.076, 0, 0, 0, 1);
 
-    // F
+    /*
+        Plug in values here of target position
+    */
     Eigen::Quaternionf leftEyeRT = leftEye.computeRotationTransformation(1, 0.1125, 0.3375);
     Eigen::Quaternionf rightEyeRT = rightEye.computeRotationTransformation(1, 0.1125, 0.3375);
 
