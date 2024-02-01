@@ -18,12 +18,12 @@ bool Client::ConnectToServer(const std::string& serverIP, int serverPort) {
     }
 
     // Send the client's name to the server
-    SendMessage(clientName);
+    sendMessage(clientName);
 
     return true;
 }
 
-bool Client::SendMessage(const std::string& message) {
+bool Client::sendMessage(const std::string& message) {
     try {
         boost::asio::write(clientSocket, boost::asio::buffer(message + '\n'));
     } catch (const std::exception& e) {
@@ -33,7 +33,7 @@ bool Client::SendMessage(const std::string& message) {
     return true;
 }
 
-std::string Client::ReceiveMessage() {
+std::string Client::receiveMessage() {
     boost::asio::streambuf response;
     try {
         boost::asio::read_until(clientSocket, response, '\n');

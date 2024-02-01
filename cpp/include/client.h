@@ -8,8 +8,8 @@ class Client {
 public:
     Client(const std::string& name);
     bool ConnectToServer(const std::string& serverIP, int serverPort);
-    bool SendMessage(const std::string& message);
-    std::string ReceiveMessage();
+    bool sendMessage(const std::string& message);
+    std::string receiveMessage();
 
 private:
     boost::asio::io_service ioService;

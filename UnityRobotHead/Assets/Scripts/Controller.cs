@@ -5,16 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 
 using System.Runtime.InteropServices;
-/*
 
-Project Design Strategy:
-
-Monitor -> User -> Targets
-
-Robot head will be the location of the monitor. the User object will be where the user sits relative
-to the monitor. Target object will be the grid of lookable targets
-
-*/
 public class Controller : MonoBehaviour
 {
     private static bool debug = true;
@@ -38,32 +29,29 @@ public class Controller : MonoBehaviour
 
     void Start () 
     {
-        // initalize head
+        Debug.Log("*** Starting up Robot Head ***");
+          
+        unityClient = new UnityClient("head");
+        unityClient.ConnectToServer("127.0.0.1", 12345);
 
-        /* Settings for Production */
-        // float headDist = 1.0f; // distance from camera
-        // head = Instantiate(head, new Vector3(0, 0, -headDist), Quaternion.identity);
-        // leftEye = Instantiate(leftEye, new Vector3(0.13f,-0.015f,-headDist + -0.076f), Quaternion.identity);
-        // rightEye = Instantiate(rightEye, new Vector3(0.13f,-0.015f,-headDist + 0.076f), Quaternion.identity);
-        // leftEye.transform.parent = head.transform;
-        // rightEye.transform.parent = head.transform;
-        // head.transform.rotation = Quaternion.Euler(new Vector3(0, -90, 0));
+        // Setup environment variables (treating the camera as the center point)
+        // Inputs effect the x coordinate of the game objects. y and z coordinates are standardized.
 
-        // camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0 ,-180, 0)));
-        // user = Instantiate(user, new Vector3(0,0,0.5f), Quaternion.Euler(new Vector3(0, -180, 0)));
-        // plane = Instantiate(plane, new Vector3(0,0,1), Quaternion.Euler(new Vector3(0, -90, 90)));
+        float camPos = float.Parse(unityClient.ReceiveMessage());  // camera position
+        float headDist = float.Parse(unityClient.ReceiveMessage()); // how far head should be from camera
+        float targetDist = float.Parse(unityClient.ReceiveMessage()); // distance from camera to target
+        string monitorSize = unityClient.ReceiveMessage(); // appears as "hxw" where height is replaced with the actual height and w is replaced with the actual width
+        string resolution = unityClient.ReceiveMessage(); // appears as "yxz". example input would be "1080x920"
 
-        /* Settings for Demo. For some reason, lookAt does not work if head is normalized on Z axis */
-        float headDist = 1.0f; // distance from camera
         head = Instantiate(head, new Vector3(-headDist, 0, 0), Quaternion.identity);
         leftEye = Instantiate(leftEye, new Vector3(0.13f + -headDist,-0.015f, -0.076f), Quaternion.identity);
         rightEye = Instantiate(rightEye, new Vector3(0.13f + -headDist, -0.015f, 0.076f), Quaternion.identity);
         leftEye.transform.parent = head.transform;
         rightEye.transform.parent = head.transform;
 
-        camera = (Camera) Instantiate(camera, new Vector3(0,0,0), Quaternion.Euler(new Vector3(0, 270, 0)));
-        user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, 0, 0)));
-        plane = Instantiate(plane, new Vector3(1,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
+        camera = (Camera) Instantiate(camera, new Vector3(camPos,0,0), Quaternion.Euler(new Vector3(0, 270, 0)));
+        // user = Instantiate(user, new Vector3(0.5f,0,0), Quaternion.Euler(new Vector3(0, 0, 0))); <- currently user does not serve much of a purpose, but saving here in case its needed
+        plane = Instantiate(plane, new Vector3(targetDist,0,0), Quaternion.Euler(new Vector3(0, 0, 90)));
 
         // for cross looking
         eyeOrientVect = new Vector3(1, 0, 0);
@@ -71,15 +59,12 @@ public class Controller : MonoBehaviour
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
-        // Server Client
-        unityClient = new UnityClient("head");
-        unityClient.ConnectToServer("127.0.0.1", 12345);
+
+
     }
 
     void Update() {
-        // lookAt(babyPlanes[5].position);
-        // Debug.Log(leftEye.transform.rotation);
-        // Debug.Log(rightEye.transform.rotation);
+        // Constantly listen for new messages for gaze
         acceptAndModifyQuats();
     }
 
@@ -97,37 +82,6 @@ public class Controller : MonoBehaviour
 
      void updateCameraFocalLength(float f) {
         // use f to focal length
-    }
-    
-    // Vector3: 3 floats, not necessarily pos or rot
-    // position: gotten from Transform.position
-    // 
-    public void lookAt(Vector3 target) {
-        // get location, rotation
-        Vector3 rEyePos = rightEye.transform.position;
-        Vector3 lEyePos = leftEye.transform.position;
-        Vector3 lEyeVect = target - lEyePos;
-        Vector3 rEyeVect = target - rEyePos;
-        lEyeVect = Vector3.Normalize(lEyeVect);
-        rEyeVect = Vector3.Normalize(rEyeVect);
-        // draw laser eyes (superman)
-        Debug.DrawRay(rEyePos, rEyeVect * 10000000, Color.red, 100000f);
-        Debug.DrawRay(lEyePos, lEyeVect * 10000000, Color.red, 100000f);
-        Vector3 lcross = Vector3.Cross(eyeOrientVect, lEyeVect);
-        Vector3 rcross = Vector3.Cross(eyeOrientVect, rEyeVect);
-        float langle = Vector3.Angle(lEyeVect, eyeOrientVect);
-        float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
-        lcross = Vector3.Normalize(lcross);
-        rcross = Vector3.Normalize(rcross);
-        // this rotation should be done in C++ file epic
-        // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
-        // the eye (left eye for example) is currently at M_head * M_eye_l
-        rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
-        leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
-    }
-
-    void TestServer() {
-        // test code
     }
 
     // Method to make sure server code is functioning properly

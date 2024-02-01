@@ -2,6 +2,7 @@ Server/server.exe
 
 cpp/build/
 .vscode/
+Results/
 
 # gitignore template for Unity projects
 
