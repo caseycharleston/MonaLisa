@@ -1,4 +1,4 @@
-#include "client.h"
+#include "include/client.h"
 #include "rigid_transformation.h"
 // #include "optimize.cpp"
 
@@ -9,6 +9,7 @@
 #include <fstream>
 #include <ctime>
 #include <random>
+#include <iomanip>
 
 using namespace std;
 
@@ -27,7 +28,8 @@ void setup_environment(ofstream& file) {
     if (input.length() == 0) {
         input = "0";
     }
-    myClient.sendMessage(input);
+    cout << "current message: " << input;
+    myClient.sendMessage("yes");
     file << "camera position: " << input << endl;
 
     input = "";
@@ -87,10 +89,6 @@ void RadiansToDegrees(float arr[]) {
 // Testing file for server. Make sure return values look right!
 int main () {
     if (debug) cout << "Starting lisa_driver main @ lisa_driver.cpp" << endl;
-    // if (!myClient.ConnectToServer("127.0.0.1", 12345)) {
-    //     cout << "Failed to connect to server. Exiting.";
-    //     return 0;
-    // }
     // // Create txt file for this experiment run
     // Get current timestamp
     std::time_t currentTime = std::time(nullptr);
@@ -110,8 +108,55 @@ int main () {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dis(0, 15);
-
     int count = 1;
+
+    Client myClient("LisaDriver");
+    if (!myClient.ConnectToServer("127.0.0.1", 12345)) {
+        cout << "Failed to connect to server. Exiting.";
+        return 0;
+    }
+
+    cout << "Starting Initialization" << endl;
+        cout << "Camera position - Enter a FLOAT value (default 0.0): ";
+        string input;
+        cin >> input;
+        if (input.length() == 0) {
+            input = "0.0";
+        }
+        cout << "current message: " << input << endl;
+        myClient.sendMessage(input);
+
+        input = "";
+        cout << "Head distance - Enter a FLOAT value (default -1.0): ";
+        cin >> input;
+        if (input.length() == 0) {
+            input = "-1.0";
+        }
+        myClient.sendMessage(input);
+
+        input = "";
+        cout << "Target distance - Enter a float value (default 1.0): ";
+        cin >> input;
+        if (input.length() == 0) {
+            input = "1.0";
+        }
+        myClient.sendMessage(input);
+
+        input = "";
+        cout << "monitor size - Enter a string value in the form of \"wxh\". " << endl << "For example, 20x10 (default 0x0): ";
+        cin >> input;
+        if (input.length() == 0) {
+            input = "0x0";
+        }
+        myClient.sendMessage(input);
+
+        input = "";
+        cout << "monitor resolution - Enter a string value in the form of \"yxz\". " << endl << "For example, 1920x1080 (default 1920x1080): ";
+        cin >> input;
+        if (input.length() == 0) {
+            input = "1920x1080";
+        }
+        myClient.sendMessage(input);
 
     while (true) {
         file << "trial " << count << " | ";
@@ -119,35 +164,42 @@ int main () {
         int lisa;
         cout << "Enter 0 for normal head, 1 for mona lisa head: ";
         cin >> lisa;
+
+        if (lisa == 1) {
+            myClient.sendMessage("1");
+        } else {
+            myClient.sendMessage("1");
+        }
+
         file << "Model: ";
         if (lisa == 1) {
             file << "Mona Lisa | ";
         } else {
             file << "Normal | ";
         }
-        // Obtain random square to look at
-        // TODO: copy down baby square positions in this file to pass onto computeRotationTransformation
-        // Probably should make it a <char, (x,y,z)> mapping to write chars to results
-        int randomSquare = dis(gen);
-        cout << "Picked random square: " << randomSquare << endl;
-        file << "Gazed Square: " << randomSquare << " | ";
+        // // Obtain random square to look at
+        // // TODO: copy down baby square positions in this file to pass onto computeRotationTransformation
+        // // Probably should make it a <char, (x,y,z)> mapping to write chars to results
+        // int randomSquare = dis(gen);
+        // cout << "Picked random square: " << randomSquare << endl;
+        // file << "Gazed Square: " << randomSquare << " | ";
 
-        cout << "Input participant guess as the letter they guessed: ";
-        char guess;
-        cin >> guess;
-        file << "Guessed Square: " << guess << " | ";
+        // cout << "Input participant guess as the letter they guessed: ";
+        // char guess;
+        // cin >> guess;
+        // file << "Guessed Square: " << guess << " | ";
 
-        file << "Was correct? ";
-        // TODO: change randomSquare to char representation
-        if (guess == randomSquare) {
-            file << "Yes | ";
-        } else {
-            file << " No | ";
-        }
+        // file << "Was correct? ";
+        // // TODO: change randomSquare to char representation
+        // if (guess == randomSquare) {
+        //     file << "Yes | ";
+        // } else {
+        //     file << " No | ";
+        // }
 
-        file << endl;
-        file.flush(); // ensure result is written down in file
-        count++;
+        // file << endl;
+        // file.flush(); // ensure result is written down in file
+        // count++;
     }
 
     // // RIGID TRANSFORM OBJECT
