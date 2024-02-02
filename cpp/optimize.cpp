@@ -3,54 +3,79 @@
 #include <Eigen/Dense>
 
 struct ProjectionCostFunction {
-    ProjectionCostFunction(const Eigen::Matrix<double, 4, 1>& regProjMat,
-                           const Eigen::Matrix<double, 4, 1>& monaProjMat)
-        : regular_projection_matrix(regProjMat),
-          updated_projection_matrix(monaProjMat) {}
+    //add parameters + rigid tranform matrix for mona eyePose + grid points
+    ProjectionCostFunction(const Eigen::Matrix<double, 3, 1>& regular_proj,
+                           const Eigen::Matrix<double, 4, 3>& mona_3d,
+                           const Eigen::Matrix<double, 64, 64>& grid_points)
+        : regular_projection_matrix(regular_proj, mona_3d, grid_points){}
 
     template <typename T>
-    bool operator()(const T* const z, T* residual) const {
+    //add f, z, as parameters
+    bool operator()(const T* const z, const T* const f, T* residual) const {
         // Create Eigen matrices from regular_projection_matrix and updated_proj_mat
-        Eigen::Map<const Eigen::Matrix<T, 4, 1>> reg_proj_mat(regProjMat.data());
-        Eigen::Map<Eigen::Matrix<T, 4, 1>> mona_proj_mat(monaProjMat.data());
+
+        //compute mona gaze vector
+        Eigen::Matrix<double, 4, 3> camera_proj;
+        camera proj << f[0], 0, 0, 0,
+                       0, f[0], 0, 0,
+                       0, 0, 1, 0;
+        Eigen::Matrix<double, 4, 1> origin;
+        origin<< 0,
+                 0,
+                 0,
+                 z[0]; 
+
+        Eigen::Matrix<double, 3, 1> mona_proj = camera_proj * origin;
+
+        residual[0] = regular_proj - mona_proj;
         
-        // Update 3rd row, first column (z value of matrix)
-        monaProjMat(2, 0) = z[0];
-
-        // Compute the difference between regular_proj_mat and updated_proj_mat
-        Eigen::Matrix<T, 4, 1> diff = regProjMat - monaProjMat;
-
-        // Flatten the difference matrix into the residual array
-        Eigen::Map<Eigen::Matrix<T, 8, 1>> residual_map(residual);
-        residual_map = Eigen::Map<const Eigen::Matrix<T, 8, 1>>(diff.data());
-
         return true;
     }
 
-    static ceres::CostFunction* Create(const Eigen::Matrix<double, 4, 1>& regProjMat,
-                                       const Eigen::Matrix<double, 4, 1>& monaProjMat) {
-        return new ceres::AutoDiffCostFunction<ProjectionCostFunction, 8, 1>(
-            new ProjectionCostFunction(regProjMat, monaProjMat)
+    static ceres::CostFunction* Create(const Eigen::Matrix<double, 3, 1>& regular_proj,
+                                       const Eigen::Matrix<double, 4, 3>& mona_3d,
+                                       const Eigen::Matrix<double, 64, 64>& grid_points) {
+        return new ceres::AutoDiffCostFunction<ProjectionCostFunction, 6, 1>(
+            new ProjectionCostFunction(regular_proj, mona_3d, grid_points)
         );
     }
 
-    const Eigen::Matrix<double, 4, 1>& regProjMat;
-    const Eigen::Matrix<double, 4, 1>& monaProjMat;
+    const Eigen::Matrix<double, 4, 1>& regular_proj;
+    const Eigen::Matrix<double, 4, 3>& mona_3d;
+    const Eigen::Matrix<double, 64, 64>& grid_points;
 };
 
 int main() {
     // Define your regular and updated projection matrices
-    Eigen::Matrix<double, 4, 1> regProjection;
-    Eigen::Matrix<double, 4, 1> monaProjection;
+
+    double focal_length = 50;
+    double z_distance = 0;
+
+    Eigen::Matrix<double, 4, 3> reg_coordinates;
+    Eigen::Matrix<double, 4, 3> mona_coordinates;
+    Eigen::Matrix<double, 64, 64> grid_points;
+
+    Eigen::Matrix<double, 4, 3> camera_proj;
+    camera proj << 50, 0, 0, 0,
+                    0, 50, 0, 0,
+                    0, 0, 50, 0;
+    Eigen::Matrix<double, 4, 1> origin;
+    origin << 0, 
+              0,
+              0,
+              1;
+
+    Eigen::Matrix<double, 3, 1> reg_projection = camera_proj * origin;
 
     // Set up the Ceres Solver problem
     ceres::Problem problem;
 
     // Add the cost function to the problem
     problem.AddResidualBlock(
-        ProjectionCostFunction::Create(regProjection, monaProjection),
+        ProjectionCostFunction::Create(reg_projection, mona_3d, grid_points),
         nullptr, // Loss function (nullptr for default)
-        monaProjection(2, 0).data() // The parameter to be optimized (z)
+        z_distance, 
+        focal_length // The parameters to be optimized 
     );
 
     // Set up the solver options
@@ -68,3 +93,4 @@ int main() {
 
     return 0;
 }
+
