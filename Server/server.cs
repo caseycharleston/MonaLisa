@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,8 @@ class Server
 {
     private TcpListener tcpListener;
     private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
-
+    // represents the initial values for [camPos, headDist, targetDist, monitorSize, resolution]
+    private string[] initialValues = new string[5];
     public Server(string ipAddress, int port)
     {
         IPAddress localAddress = IPAddress.Parse(ipAddress);
@@ -20,7 +22,7 @@ class Server
     public void Start()
     {
         tcpListener.Start();
-        Console.WriteLine("Server is listening for incoming connections...");
+        Console.WriteLine("Server is listening for incoming connections!!...");
 
         while (true)
         {
@@ -59,21 +61,33 @@ class Server
     {
         NetworkStream clientStream = client.GetStream();
         StreamReader reader = new StreamReader(clientStream, Encoding.UTF8);
-
+        Console.WriteLine("Now handling: '{0}'!", clientName);
+        if (clientName.Equals("head")) {
+            for (int i = 0; i < 5; i++) {
+                Console.WriteLine("Now sending message: '{0}'!", initialValues[i]);
+                SendMessageToClient(clientName, initialValues[i]);
+            }
+        }
+        int initialValuesCount = 0;
         while (true)
         {
             try
             {
                 string message = reader.ReadLine();
-
                 if (string.IsNullOrEmpty(message))
                 {
                     continue;
                 }
+                Console.WriteLine("Received from '{0}': {1}", clientName, message);
                 // Example client code. Shows the ability to write specific code for a client's name
                 if (clientName.Equals("LisaDriver")) {
-                    Console.WriteLine("Received from '{0}': {1}", clientName, message);
-                    SendMessageToClient("head", message);
+                    // initially, enter the desired values for [camPos, headDist, targetDist, monitorSize, resolution]
+                    // ** LISA DRIVER MUST BE INITIALIZED FIRST FOR THE HEAD TO RECIEVE THE STARTING VALUES!**
+                    if (initialValuesCount < 5) {
+                        Console.WriteLine("RECIEVED from '{0}': {1}", clientName, message);
+                        initialValues[initialValuesCount] = message;
+                        initialValuesCount++;
+                    }
                 }
             }
             catch (IOException)
@@ -81,7 +95,6 @@ class Server
                 break;
             }
         }
-
         clients.Remove(clientName);
         client.Close();
         Console.WriteLine("Client '{0}' disconnected.", clientName);
@@ -109,5 +122,9 @@ class Server
 
         Server server = new Server(ipAddress, port);
         server.Start();
+    }
+
+    private void getInitialParameters() {
+    
     }
 }
