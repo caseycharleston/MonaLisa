@@ -25,7 +25,7 @@ struct ProjectionCostFunction {
                  0,
                  z[0]; 
 
-        Eigen::Matrix<double, 3, 1> mona_proj = camera_proj * origin;
+        Eigen::Matrix<double, 3, 1> mona_proj = mona_3d * camera_proj * origin;
 
         residual[0] = regular_proj - mona_proj;
         
