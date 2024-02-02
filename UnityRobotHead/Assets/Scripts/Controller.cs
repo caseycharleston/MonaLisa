@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using System.Globalization;
+using System.Threading;
 
 using System.Runtime.InteropServices;
 
@@ -32,16 +34,62 @@ public class Controller : MonoBehaviour
         Debug.Log("*** Starting up Robot Head ***");
           
         unityClient = new UnityClient("head");
-        unityClient.ConnectToServer("127.0.0.1", 12345);
+        if (!unityClient.ConnectToServer("127.0.0.1", 12345)) {
+            Debug.Log("*** Can't connect to server ***");
+        }
+
+        string[] initialValues = new string[5];
+        for (int i = 0; i < 5; i++) {
+            initialValues[i] = unityClient.ReceiveMessage();
+            unityClient.ReceiveMessage();
+        }
+
+        Debug.Log("*** message recieved, these are the initial values: ***");
+        for (int i = 0; i < 5; i++) {
+            Debug.Log(initialValues[i]);
+        }
 
         // Setup environment variables (treating the camera as the center point)
         // Inputs effect the x coordinate of the game objects. y and z coordinates are standardized.
 
-        float camPos = float.Parse(unityClient.ReceiveMessage());  // camera position
-        float headDist = float.Parse(unityClient.ReceiveMessage()); // how far head should be from camera
-        float targetDist = float.Parse(unityClient.ReceiveMessage()); // distance from camera to target
-        string monitorSize = unityClient.ReceiveMessage(); // appears as "hxw" where height is replaced with the actual height and w is replaced with the actual width
-        string resolution = unityClient.ReceiveMessage(); // appears as "yxz". example input would be "1080x920"
+        // float camPos = float.Parse((string) initialValues[0]);  // camera position
+        // float headDist = float.Parse((string) initialValues[1]); // how far head should be from camera
+        // float targetDist = float.Parse((string)initialValues[2]); // distance from camera to target
+        // string monitorSize = initialValues[3]; // appears as "hxw" where height is replaced with the actual height and w is replaced with the actual width
+        // string resolution = initialValues[4]; // appears as "yxz". example input would be "1080x920"
+
+        // ** place default values here **
+        float camPos = 0.0f;
+        float headDist = -1.0f;
+        float targetDist = 1.0f;
+        float result = 0.0f;  
+        if (float.TryParse(initialValues[0], out result)){
+            // use your valid result here
+            Debug.Log("*** first ***");
+            Debug.Log(result);
+            camPos = result;
+        }
+
+        float result2 = 0.0f;  
+        if (float.TryParse(initialValues[1], out result2)){
+            // use your valid result here
+            Debug.Log("*** second ***");
+            Debug.Log(result2);
+            headDist = result2;
+        } 
+        float result3 = 0.0f;
+        if (float.TryParse(initialValues[2], out result3)){
+            // use your valid result here
+            Debug.Log("*** third ***");
+            Debug.Log(result3);
+            targetDist = result3;
+        } 
+
+        // float camPos = float.Parse("0.0");  // camera position
+        // float headDist = float.Parse("5.0"); // how far head should be from camera
+        // float targetDist = float.Parse("10.0"); // distance from camera to target
+        string monitorSize = initialValues[3]; // appears as "hxw" where height is replaced with the actual height and w is replaced with the actual width
+        string resolution = initialValues[4]; // appears as "yxz". example input would be "1080x920"
 
         head = Instantiate(head, new Vector3(-headDist, 0, 0), Quaternion.identity);
         leftEye = Instantiate(leftEye, new Vector3(0.13f + -headDist,-0.015f, -0.076f), Quaternion.identity);
@@ -59,13 +107,11 @@ public class Controller : MonoBehaviour
         for (int i = 0; i < NUM_GRIDS; i++) {
             babyPlanes[i] = plane.transform.GetChild(i);
         }
-
-
     }
 
     void Update() {
         // Constantly listen for new messages for gaze
-        acceptAndModifyQuats();
+        //acceptAndModifyQuats();
     }
 
     // camera focal length is increased by same scale that robot head position is changed
@@ -93,7 +139,7 @@ public class Controller : MonoBehaviour
             rightEye.transform.rotation = rots[0];
             leftEye.transform.rotation = rots[1];
         } else {
-            Debug.Log("rots is null. Message received badly structured");
+            //Debug.Log("rots is null. Message received badly structured");
         }
     }
 
