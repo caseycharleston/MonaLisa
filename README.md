@@ -9,9 +9,7 @@ csc server.cs
 mono server.exe
 ```
 
-### on Windows:
-
-### On WSL:
+### on Windows (WSL):
 ```bash
 cd Server
 dotnet build
