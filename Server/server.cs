@@ -63,19 +63,16 @@ class Server
         StreamReader reader = new StreamReader(clientStream, Encoding.UTF8);
         Console.WriteLine("Now handling: '{0}'!", clientName);
         if (clientName.Equals("head")) {
-            for (int i = 0; i < 5; i++) {
-                Console.WriteLine("Now sending message: '{0}'!", initialValues[i]);
-                SendMessageToClient(clientName, initialValues[i]);
-            }
+            // for (int i = 0; i < 5; i++) {
+            //     Console.WriteLine("Now sending message: '{0}'!", initialValues[i]);
+            //     SendMessageToClient(clientName, initialValues[i]);
+            // }
         }
         int initialValuesCount = 0;
-        while (true)
-        {
-            try
-            {
+        while (true) {
+            try {
                 string message = reader.ReadLine();
-                if (string.IsNullOrEmpty(message))
-                {
+                if (string.IsNullOrEmpty(message)) {
                     continue;
                 }
                 Console.WriteLine("Received from '{0}': {1}", clientName, message);
@@ -83,15 +80,18 @@ class Server
                 if (clientName.Equals("LisaDriver")) {
                     // initially, enter the desired values for [camPos, headDist, targetDist, monitorSize, resolution]
                     // ** LISA DRIVER MUST BE INITIALIZED FIRST FOR THE HEAD TO RECIEVE THE STARTING VALUES!**
-                    if (initialValuesCount < 5) {
-                        Console.WriteLine("RECIEVED from '{0}': {1}", clientName, message);
-                        initialValues[initialValuesCount] = message;
-                        initialValuesCount++;
+                    // if (initialValuesCount < 5) {
+                    //     Console.WriteLine("RECIEVED from '{0}': {1}", clientName, message);
+                    //     initialValues[initialValuesCount] = message;
+                    //     initialValuesCount++;
+                    // }
+                    // handle one trial
+                    if (message.Equals("Sending grid number")) {
+                        executeOneTrial(reader, clientName);
                     }
                 }
             }
-            catch (IOException)
-            {
+            catch (IOException) {
                 break;
             }
         }
@@ -126,5 +126,35 @@ class Server
 
     private void getInitialParameters() {
     
+    }
+
+    public void executeOneTrial(StreamReader reader, string clientName) {
+        // here take in the grid number and send it to the head client
+        Console.WriteLine("got the first msg!");
+        string secondMsg = reader.ReadLine();
+        while (string.IsNullOrEmpty(secondMsg)) {
+            Console.WriteLine("waiting!");
+            secondMsg = reader.ReadLine();
+        }
+        Console.WriteLine("RECIEVED from '{0}': {1}", clientName, secondMsg);
+        SendMessageToClient("head", "Sending grid number");
+        SendMessageToClient("head", secondMsg);
+        // here we will determine if its mona lisa head or regular head
+        string thirdMsg = reader.ReadLine();
+        while (string.IsNullOrEmpty(thirdMsg)) {
+            Console.WriteLine("waiting!");
+            thirdMsg = reader.ReadLine();
+        }
+        Console.WriteLine("RECIEVED from '{0}': {1}", clientName, thirdMsg);
+        if (thirdMsg.Equals("Lisa")) {
+            Console.WriteLine("will handle mona lisa");
+            // send monaLisa z values and focal length computed from the 
+            SendMessageToClient("head", "Lisa");
+        } else {
+                // send message to controller to display the regular head
+            Console.WriteLine("will handle regular");
+            SendMessageToClient("head", "Regular");
+        }
+        Console.WriteLine(""); 
     }
 }
