@@ -108,7 +108,6 @@ int main () {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dis(0, 15);
-    int count = 1;
 
     Client myClient("LisaDriver");
     if (!myClient.ConnectToServer("127.0.0.1", 12345)) {
@@ -116,59 +115,72 @@ int main () {
         return 0;
     }
 
-    cout << "Starting Initialization" << endl;
-        cout << "Camera position - Enter a FLOAT value (default 0.0): ";
-        string input;
-        cin >> input;
-        if (input.length() == 0) {
-            input = "0.0";
-        }
-        cout << "current message: " << input << endl;
-        myClient.sendMessage(input);
+    // cout << "Starting Initialization" << endl;
+    
+    //     cout << "Camera position - Enter a FLOAT value (default 0.0): ";
+    //     string input;
+    //     cin >> input;
+    //     if (input.length() == 0) {
+    //         input = "0.0";
+    //     }
+    //     cout << "current message: " << input << endl;
+    //     myClient.sendMessage(input);
 
-        input = "";
-        cout << "Head distance - Enter a FLOAT value (default -1.0): ";
-        cin >> input;
-        if (input.length() == 0) {
-            input = "-1.0";
-        }
-        myClient.sendMessage(input);
+    //     input = "";
+    //     cout << "Head distance - Enter a FLOAT value (default -1.0): ";
+    //     cin >> input;
+    //     if (input.length() == 0) {
+    //         input = "-1.0";
+    //     }
+    //     myClient.sendMessage(input);
 
-        input = "";
-        cout << "Target distance - Enter a float value (default 1.0): ";
-        cin >> input;
-        if (input.length() == 0) {
-            input = "1.0";
-        }
-        myClient.sendMessage(input);
+    //     input = "";
+    //     cout << "Target distance - Enter a float value (default 1.0): ";
+    //     cin >> input;
+    //     if (input.length() == 0) {
+    //         input = "1.0";
+    //     }
+    //     myClient.sendMessage(input);
 
-        input = "";
-        cout << "monitor size - Enter a string value in the form of \"wxh\". " << endl << "For example, 20x10 (default 0x0): ";
-        cin >> input;
-        if (input.length() == 0) {
-            input = "0x0";
-        }
-        myClient.sendMessage(input);
+    //     input = "";
+    //     cout << "monitor size - Enter a string value in the form of \"wxh\". " << endl << "For example, 20x10 (default 0x0): ";
+    //     cin >> input;
+    //     if (input.length() == 0) {
+    //         input = "0x0";
+    //     }
+    //     myClient.sendMessage(input);
 
-        input = "";
-        cout << "monitor resolution - Enter a string value in the form of \"yxz\". " << endl << "For example, 1920x1080 (default 1920x1080): ";
-        cin >> input;
-        if (input.length() == 0) {
-            input = "1920x1080";
-        }
-        myClient.sendMessage(input);
+    //     input = "";
+    //     cout << "monitor resolution - Enter a string value in the form of \"yxz\". " << endl << "For example, 1920x1080 (default 1920x1080): ";
+    //     cin >> input;
+    //     if (input.length() == 0) {
+    //         input = "1920x1080";
+    //     }
+    //     myClient.sendMessage(input);
+
+        int count = 1;
 
     while (true) {
+
         file << "trial " << count << " | ";
-        // Select model (Normal or Mona Lisa)
+
+        int currGrid = 0;
+        myClient.sendMessage("Sending grid number");
+        cout << "pick designated grid number: ";
+        cin >> currGrid;
+        cout << "sending currentgrid picked: " << currGrid << endl;
+        string grid = to_string(currGrid);
+        myClient.sendMessage(grid);
+
+        //Select model (Normal or Mona Lisa)
         int lisa;
         cout << "Enter 0 for normal head, 1 for mona lisa head: ";
         cin >> lisa;
 
         if (lisa == 1) {
-            myClient.sendMessage("1");
+            myClient.sendMessage("Lisa");
         } else {
-            myClient.sendMessage("1");
+            myClient.sendMessage("Regular");
         }
 
         file << "Model: ";
@@ -177,6 +189,9 @@ int main () {
         } else {
             file << "Normal | ";
         }
+
+        cout << "NEXT" << endl;
+        
         // // Obtain random square to look at
         // // TODO: copy down baby square positions in this file to pass onto computeRotationTransformation
         // // Probably should make it a <char, (x,y,z)> mapping to write chars to results
