@@ -28,6 +28,7 @@ public class Controller : MonoBehaviour
     public Transform[] babyPlanes;
 
     const int NUM_GRIDS = 16;
+    int gridNumber = 0;
 
     void Start () 
     {
@@ -40,8 +41,8 @@ public class Controller : MonoBehaviour
 
         string[] initialValues = new string[5];
         for (int i = 0; i < 5; i++) {
-            initialValues[i] = unityClient.ReceiveMessage();
-            unityClient.ReceiveMessage();
+            // initialValues[i] = unityClient.ReceiveMessage();
+            // unityClient.ReceiveMessage();
         }
 
         Debug.Log("*** message recieved, these are the initial values: ***");
@@ -69,7 +70,6 @@ public class Controller : MonoBehaviour
             Debug.Log(result);
             camPos = result;
         }
-
         float result2 = 0.0f;  
         if (float.TryParse(initialValues[1], out result2)){
             // use your valid result here
@@ -91,9 +91,9 @@ public class Controller : MonoBehaviour
         string monitorSize = initialValues[3]; // appears as "hxw" where height is replaced with the actual height and w is replaced with the actual width
         string resolution = initialValues[4]; // appears as "yxz". example input would be "1080x920"
 
-        head = Instantiate(head, new Vector3(-headDist, 0, 0), Quaternion.identity);
-        leftEye = Instantiate(leftEye, new Vector3(0.13f + -headDist,-0.015f, -0.076f), Quaternion.identity);
-        rightEye = Instantiate(rightEye, new Vector3(0.13f + -headDist, -0.015f, 0.076f), Quaternion.identity);
+        head = Instantiate(head, new Vector3(headDist, 0, 0), Quaternion.identity);
+        leftEye = Instantiate(leftEye, new Vector3(0.13f + headDist,-0.015f, -0.076f), Quaternion.identity);
+        rightEye = Instantiate(rightEye, new Vector3(0.13f + headDist, -0.015f, 0.076f), Quaternion.identity);
         leftEye.transform.parent = head.transform;
         rightEye.transform.parent = head.transform;
 
@@ -112,6 +112,47 @@ public class Controller : MonoBehaviour
     void Update() {
         // Constantly listen for new messages for gaze
         //acceptAndModifyQuats();
+        string currMessage = unityClient.ReceiveMessage();
+        if (!string.IsNullOrEmpty(currMessage) && currMessage.CompareTo("Sending grid number") == 0) {
+            // here preparing to recieve grid number, return its position and recieve its quaternions             
+            string secondMsg = unityClient.ReceiveMessage();
+            while (string.IsNullOrEmpty(secondMsg)) {
+                secondMsg = unityClient.ReceiveMessage();
+                Debug.Log("waiting on grid number!");
+            }
+            Debug.Log("Recieved grid: ");
+            Debug.Log(secondMsg); 
+            Debug.Log("length of the string: ");
+            Debug.Log(secondMsg.Length);
+
+            char[] charArr = {secondMsg[1], (secondMsg.Length == 3)? secondMsg[2]: '\0'};
+            string actualMsg = new string(charArr);
+            if (int.TryParse(actualMsg, out gridNumber)) {
+                Debug.Log("parsed!");
+                Debug.Log(gridNumber);
+            } else {
+                Debug.Log("couldnt parse grid");
+            }
+            // now that we hav determined the grid we want to focus on, we will project either mona lisa or regular next
+            string thirdMsg = unityClient.ReceiveMessage();
+            while (string.IsNullOrEmpty(thirdMsg)) {
+                thirdMsg = unityClient.ReceiveMessage();
+                Debug.Log("waiting on lisa or regular!");
+            }
+            Debug.Log("Recieved: ");
+            Debug.Log(thirdMsg);
+            if (currMessage.CompareTo("Sending grid number") == 0) {
+                Debug.Log("Displaying regular");
+                lookAt(babyPlanes[gridNumber].position);
+            } else {
+                Debug.Log("Displaying Mona Lisa");
+                // here change z and focal length 
+                
+            }
+        }
+        Debug.Log("curr grid number");
+        Debug.Log(gridNumber);
+        lookAt(babyPlanes[gridNumber].position);
     }
 
     // camera focal length is increased by same scale that robot head position is changed
@@ -184,7 +225,7 @@ public class Controller : MonoBehaviour
                 return null;
             }
 
-            return new Quaternion[] { new Quaternion(w, x, y, z),new Quaternion(w2, x2, y2, z2) };
+            return new Quaternion[] { new Quaternion(w, x, y, z), new Quaternion(w2, x2, y2, z2) };
         }
         catch (Exception e)
         {
@@ -192,4 +233,58 @@ public class Controller : MonoBehaviour
             return null;
         }
     }
+
+        /*
+        Given grid number, returns the 3rd coordinates of the grids location
+    */
+    float[] getGridPos(int num) {
+        if (num < 0 || num > 16) {
+            Debug.Log("error");
+            return null;
+        }
+        float[] cords = new float[3];
+        Transform currentPlane = babyPlanes[num];
+        cords[0] = currentPlane.position.x;
+        cords[1] = currentPlane.position.y;
+        cords[2] = currentPlane.position.z;
+        return cords;
+    }
+    void handleRegProjection() {
+        // string secondMsg = unityClient.ReceiveMessage();
+        // while (string.IsNullOrEmpty(secondMsg)) {
+        //     secondMsg = unityClient.ReceiveMessage();
+        // }
+        // int gridNumber;
+        // if (Int32.TryParse(secondMsg, out int gridNumber)) {
+        //     Debug.Log(gridNumber);
+        // } else {
+        //     Debug.Log("couldnt parse grid");
+        // }
+        // Debug.Log(gridNumber);
+    }
+
+    public void lookAt(Vector3 target) {
+        // get location, rotation
+        Vector3 rEyePos = rightEye.transform.position;
+        Vector3 lEyePos = leftEye.transform.position;
+        Vector3 lEyeVect = target - lEyePos;
+        Vector3 rEyeVect = target - rEyePos;
+        lEyeVect = Vector3.Normalize(lEyeVect);
+        rEyeVect = Vector3.Normalize(rEyeVect);
+        // draw laser eyes (superman)
+        Debug.DrawRay(rEyePos, rEyeVect * 10000000, Color.red, 100000f);
+        Debug.DrawRay(lEyePos, lEyeVect * 10000000, Color.red, 100000f);
+        Vector3 lcross = Vector3.Cross(eyeOrientVect, lEyeVect);
+        Vector3 rcross = Vector3.Cross(eyeOrientVect, rEyeVect);
+        float langle = Vector3.Angle(lEyeVect, eyeOrientVect);
+        float rangle = Vector3.Angle(rEyeVect, eyeOrientVect);
+        lcross = Vector3.Normalize(lcross);
+        rcross = Vector3.Normalize(rcross);
+        // this rotation should be done in C++ file epic
+        // we need to rigidly transform the eye by M_eyeLook (to create M_eyePose)
+        // the eye (left eye for example) is currently at M_head * M_eye_l
+        rightEye.transform.rotation = Quaternion.AngleAxis(rangle, rcross);
+        leftEye.transform.rotation = Quaternion.AngleAxis(langle, lcross);
+    }
+
 }
