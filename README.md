@@ -11,7 +11,12 @@ mono server.exe
 
 ### on Windows:
 
-I'm not 100% sure on this, I may need someone to fill in the details here. If needed, you can run the commands on VS Code which should follow a similar structure as mentioned for MacOS.
+### On WSL:
+```bash
+cd Server
+dotnet build
+dotnet run
+```
 
 ## Running the Unity Client
 The code to connect to the server is already written within the `Controller.cs` file. To get the UnityRobotHead project into unity, do the following:
