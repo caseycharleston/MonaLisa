@@ -8,7 +8,14 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(Ceres REQUIRED)
 
 # Executables
-add_executable(lisa_driver lisa_driver.cpp client.cpp rigid_transformation.cpp)
+add_executable(
+    lisa_driver
+    # src/lisa_driver.cpp
+    # src/client.cpp
+    src/kinematic_link.cpp
+    src/rigid_transformation.cpp
+    src/test.cpp
+)
 
 # Link to dependencies
 target_include_directories(lisa_driver 

@@ -1,0 +1,3 @@
+/home/justin/ximena-jr/libmonalisa/build/CMakeFiles/lisa_driver.dir
+/home/justin/ximena-jr/libmonalisa/build/CMakeFiles/edit_cache.dir
+/home/justin/ximena-jr/libmonalisa/build/CMakeFiles/rebuild_cache.dir

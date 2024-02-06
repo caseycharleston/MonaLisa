@@ -4,7 +4,28 @@
 
 using namespace Eigen;
 using namespace std;
-Eigen::Vector3f RigidTransformation::computeEyeOnScreen(float fx, float fy) {
+
+RigidTransformation::RigidTransformation(
+        double tx, double ty, double tz,
+        double rx, double ry, double rz, double rw) {
+        updateRTMat(tx, ty, tz, rx, ry, rz, rw);;
+}
+
+void RigidTransformation::updateRTMat(
+        double tx, double ty, double tz, double rx, double ry, double rz, double rw) {
+        Eigen::Quaterniond rotQuat(rw, rx, ry, rz);
+        Eigen::Matrix<double,3,3> rotMat = rotQuat.toRotationMatrix();
+        _rtMat.block<3, 3>(0, 0) = rotMat;  // Copy the rotation matrix
+        _rtMat.col(3).head(3) << tx, ty, tz; // Set the translation part
+        _rtMat.row(3).head(4) << 0, 0, 0, 1.0;
+}
+
+Eigen::Matrix<double,4,4> RigidTransformation::getRTMat(){
+        return _rtMat;
+}
+
+/*
+Eigen::Vector3f RigidTransformation::computeEyeOnScreen(double fx, double fy) {
         // create camera projection Pcamera
         // here we are making the assumption that camera is center of the coordinate system
         Eigen::MatrixXf pCamera(3, 4);
@@ -19,7 +40,7 @@ Eigen::Vector3f RigidTransformation::computeEyeOnScreen(float fx, float fy) {
         return EyeOnScreen.head(2);
 }
 
-Eigen::Quaternionf RigidTransformation::computeRotationTransformation (float x, float y, float z) {
+Eigen::Quaternionf RigidTransformation::computeRotationTransformation (double x, double y, double z) {
         cout << "Eye pose: " << endl << eyePose << endl;    
         // this vector contains eye position relative to camera (Mhead * MeyePose)
         Eigen::Vector3f EyePos = eyePose.col(3).head(3);
@@ -57,22 +78,4 @@ Eigen::Quaternionf RigidTransformation::computeRotationTransformation (float x, 
         Eigen::Quaternionf quaternionToReturn(resultPose.topLeftCorner<3, 3>());
         return quaternionToReturn;
 }
-
-void RigidTransformation::update(float tx, float ty, float tz, float rx, float ry, float rz, float rw) {
-            Eigen::Quaternionf rotQuat(rw, rx, ry, rz);
-            Eigen::Matrix<float,3,3> rotMat = rotQuat.toRotationMatrix();
-            eyePose.block<3, 3>(0, 0) = rotMat;  // Copy the rotation matrix
-            eyePose.col(3).head(3) << tx, ty, tz; // Set the translation part
-            eyePose(3, 3) = 1.0; // Set the bottom-right element
-            eyePose.row(3).head(4) << 0, 0, 0, 1.0;
-
-        //     // Mhead * Meye
-        //     Eigen::Matrix<float,4,4> Mhead;
-        //     Eigen::Quaternionf headQuat(1, 0, 0, 0);
-        //     Eigen::Matrix<float,3,3> headRotMat = headQuat.toRotationMatrix();
-        //     Mhead.block<3, 3>(0, 0) = headRotMat;
-        //     Mhead.col(3).head(3) << -1, 0, 0;
-        //     Mhead.row(3).head(4) << 0, 0, 0, 1.0;
-
-        //     eyePose = Mhead * eyePose;
-}
+*/

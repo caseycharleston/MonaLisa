@@ -1,10 +1,14 @@
 #include "client.h"
+#include "rigid_transformation.h"
+
 #include <iostream>
 #include <stdio.h>
 
 using namespace std;
 // Testing file for server. Make sure return values look right!
-int main () {
+int main (int argc, char **argv) {
+    RigidTransformation rt(0.5, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+    /*
     cout << "Starting test main @ test.cpp" << endl;
     Client myClient("Test");
 
@@ -13,7 +17,7 @@ int main () {
         return 0;
     }
 
-    /* Basic send message tester */
+    // Basic send message tester
     // while (true) {
     //     char response;
     //     cout << "Send message? (y/n)";
@@ -21,8 +25,6 @@ int main () {
     //     if (response == 'n') break;
     //     myClient.SendMessage("Hello World!");
     // }
-
-    /* Basic send rotational values tester */
 
     int count = 0;
     while (true) {
@@ -37,5 +39,7 @@ int main () {
         }
         count++;
     }
+    */
+
     return 0;
 }

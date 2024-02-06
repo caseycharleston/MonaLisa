@@ -8,24 +8,26 @@
 class RigidTransformation {
 protected:
     // this matrix contains the pose of an eye (right or left and regular or monaLisa)
-    Eigen::Matrix<float,4,4> eyePose;
+    Eigen::Matrix<double,4,4> _rtMat;
 
 public:
     RigidTransformation(
-        float tx = 0.0, float ty = 0.0, float tz = 0.0,
-        float rx = 0.0, float ry = 0.0, float rz = 0.0, float rw = 1.0) {
-        update(tx, ty, tz, rx, ry, rz, rw);
-    }
+        double tx = 0.0, double ty = 0.0, double tz = 0.0,
+        double rx = 0.0, double ry = 0.0, double rz = 0.0, double rw = 1.0);
+        
     ~RigidTransformation() {}
 
+    void updateRTMat(
+        double tx = 0.0, double ty = 0.0, double tz = 0.0,
+        double rx = 0.0, double ry = 0.0, double rz = 0.0, double rw = 1.0);
+
+    Eigen::Matrix<double,4,4> getRTMat();
+
     // compute transformation from 3d coordinates to 2d based on focal lengths (projection of eye onto screen)
-    Eigen::Vector3f computeEyeOnScreen(float fx, float fy);
+    // Eigen::Vector3f computeEyeOnScreen(double fx, double fy);
 
     // Compute the transformation to make eye look at target (normal head). returns quaternion
-    Eigen::Quaternionf computeRotationTransformation(float x, float y, float z);
-
-    // fills the eyePose  with designated values
-    void update(float tx, float ty, float tz, float rx, float ry, float rz, float rw);
+    // Eigen::Quaternionf computeRotationTransformation(double x, double y, double z);
 };
 
 #endif
