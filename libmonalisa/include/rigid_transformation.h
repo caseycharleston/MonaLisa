@@ -23,11 +23,13 @@ public:
 
     Eigen::Matrix<double,4,4> getRTMat();
 
+    Eigen::Quaterniond getQuaternions();
+
     // compute transformation from 3d coordinates to 2d based on focal lengths (projection of eye onto screen)
     // Eigen::Vector3f computeEyeOnScreen(double fx, double fy);
 
     // Compute the transformation to make eye look at target (normal head). returns quaternion
-    // Eigen::Quaternionf computeRotationTransformation(double x, double y, double z);
+    Eigen::Quaterniond computeRotationTransformation(double x, double y, double z);
 };
 
 #endif

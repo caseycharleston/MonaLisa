@@ -6,6 +6,7 @@
 class KinematicLink {
 protected:
     RigidTransformation _static, _dynamic;
+    // ?
     Eigen::Matrix<double,4,4> _out;
 
 public:
@@ -13,10 +14,12 @@ public:
     ~KinematicLink();
 
     void updateStaticPart(
-        float tx, float ty, float tz, float rx, float ry, float rz, float rw);
+        double tx, double ty, double tz, double rx, double ry, double rz, double rw);
     void updateDynamicPart(
-        float tx, float ty, float tz, float rx, float ry, float rz, float rw);
-
+        double tx, double ty, double tz, double rx, double ry, double rz, double rw);
+    Eigen::Quaterniond rotateDynamicPart(double x, double y, double z);
+    Eigen::Quaterniond getRotationQuaternions();
+    // ?
     void updateOut();
     Eigen::Matrix<double,4,4> getOut();
 };
